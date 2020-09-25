@@ -31,9 +31,9 @@ set COMPILE_DAq=1
 rem//File path to MSBuild
 set PATH_MSBuild=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat
 rem//Intermediate directory
-set DIR_TEMP=C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared1\temp\
+set DIR_TEMP=C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared2\temp\
 rem//Solution directory
-set DIR_SOLUTION=C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared1\Shifted1keV\SF1keV\
+set DIR_SOLUTION=C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared2\Shifted1keV\SF1keV\
 rem//File path to DAn project
 set PATH_PROJ_DAn=%DIR_SOLUTION%DAn\CDAn_SF1keV.vcxproj
 rem//Preffix of the output dll file name for DAn
