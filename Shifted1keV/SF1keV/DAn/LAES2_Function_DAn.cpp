@@ -2082,8 +2082,8 @@ namespace LAES2 {
 						return std::move(v);
 					};
 
-					//ウェーブ名の先頭にソース名つける　末尾にConditionつける
-					auto SetPreff = [&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
+					//ウェーブ名の先頭と末尾に文字列つける
+					auto SetName = [&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
 						const auto Src = CurrentDAqInfo::SourceLMFileName();//ソースlmf名称を先頭に
 						return Src + Name + WaveName_Suffix;
 					};
@@ -2096,23 +2096,23 @@ namespace LAES2 {
 					//積算を終えたらCalibrateを実行して結果を記録する
 					StringsForIgorTextWave::WaveText1(tstr,
 						{
-							{ToScales(sinfoR),SetPreff(_T("horizontal_R")), _T("For 1D graphs")},//横軸スケール R
-							{ToScales(sinfoTheta_deg),SetPreff(_T("horizontal_Theta_deg")),_T("For 1D graphs")},//横軸スケール Theta_deg
+							{ToScales(sinfoR),SetName(_T("g_R")), _T("For 1D graphs")},//横軸スケール R
+							{ToScales(sinfoTheta_deg),SetName(_T("g_Th")),_T("For 1D graphs")},//横軸スケール Theta_deg
 
-							{up2RawR->Get(),SetPreff(_T("hist_R")), Wave_Comment},//vs R, 感度補正なし
-							{up2RawR->GetE(),SetPreff(_T("histE_R")), Wave_Comment},//vs R, 感度補正なし
+							{up2RawR->Get(),SetName(_T("h_R")), Wave_Comment},//vs R, 感度補正なし
+							{up2RawR->GetE(),SetName(_T("hE_R")), Wave_Comment},//vs R, 感度補正なし
 
 
-							{up2RawTheta_deg->Get(), SetPreff(_T("hist_Theta_deg")),Wave_Comment},//vs Theta_deg, 感度補正なし
-							{up2RawTheta_deg->GetE(), SetPreff(_T("histE_Theta_deg")),Wave_Comment},//vs Theta_deg, 感度補正なし
+							{up2RawTheta_deg->Get(), SetName(_T("h_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
+							{up2RawTheta_deg->GetE(), SetName(_T("hE_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
 
 
 							{std::move(*DCS_Theory_vs_R),_T("DCS_R"),_T("Elastic32, 1000 eV")},//vs R, DCS理論曲線
-							{std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Theta_deg"),_T("Elastic32, 1000 eV")},//vs Theta_deg, DCS理論曲線
+							{std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Th"),_T("Elastic32, 1000 eV")},//vs Theta_deg, DCS理論曲線
 
 
-							{up2Theta_deg->Get(),SetPreff(_T("histc_Theta_deg")),Wave_Comment},//vs Theta_deg, 感度補正あり
-							{up2Theta_deg->GetE(),SetPreff(_T("histcE_Theta_deg")),Wave_Comment},//vs Theta_deg, 感度補正ありの誤差
+							{up2Theta_deg->Get(),SetName(_T("c_Th")),Wave_Comment},//vs Theta_deg, 感度補正あり
+							{up2Theta_deg->GetE(),SetName(_T("cE_Th")),Wave_Comment},//vs Theta_deg, 感度補正ありの誤差
 
 						}
 					);
@@ -2121,11 +2121,11 @@ namespace LAES2 {
 
 					StringsForIgorTextWave::WaveText1(tstr,
 						{
-							{ToBoundaries(sinfoR),SetPreff(_T("boundary_R")),_T("For 2D images")},//横軸境界 R
-							{ToBoundaries(sinfoTheta_deg),SetPreff(_T("boundary_Theta_deg")),_T("For 2D images")},//横軸境界 Theta_deg
+							{ToBoundaries(sinfoR),SetName(_T("i_R")),_T("For 2D images")},//横軸境界 R
+							{ToBoundaries(sinfoTheta_deg),SetName(_T("i_Th")),_T("For 2D images")},//横軸境界 Theta_deg
 
-							{ToBoundaries(sinfoPhi),SetPreff(_T("boundary_Phi_deg")),_T("For 2D images")},//横軸境界 Phi_deg
-							{ToBoundaries(sinfoVarPhi),SetPreff(_T("boundary_VarPhi_deg")),_T("For 2D images")},//横軸境界 VarPhi_deg
+							{ToBoundaries(sinfoPhi),SetName(_T("i_Ph")),_T("For 2D images")},//横軸境界 Phi_deg
+							{ToBoundaries(sinfoVarPhi),SetName(_T("i_VPh")),_T("For 2D images")},//横軸境界 VarPhi_deg
 						}
 					);
 					file_output.WriteString(tstr.c_str());
@@ -2133,21 +2133,21 @@ namespace LAES2 {
 
 					StringsForIgorTextWave::WaveText2(tstr,
 						{
-							{up2RawR_Phi->Get(), SetPreff(_T("hist_R_Phi")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
-							{up2RawR_Phi->GetE(), SetPreff(_T("histE_R_Phi")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
+							{up2RawR_Phi->Get(), SetName(_T("h_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
+							{up2RawR_Phi->GetE(), SetName(_T("hE_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
 
-							{up2RawTheta_deg_VarPhi->Get(),SetPreff(_T("hist_Theta_deg_VarPhi")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
-							{up2RawTheta_deg_VarPhi->GetE(),SetPreff(_T("histE_Theta_deg_VarPhi")),Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
+							{up2RawTheta_deg_VarPhi->Get(),SetName(_T("h_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
+							{up2RawTheta_deg_VarPhi->GetE(),SetName(_T("hE_Th_VPh")),Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
 
-							{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Phi_deg"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
-							{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Theta_deg_VarPhi_deg"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
+							{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
+							{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
 
-							{up2DetectorSensitivity->DetectorSensitivityDistribution(),_T("Ratio_R_Phi"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度
-							{up2DetectorSensitivity->DetectorSensitivityDistributionE(),_T("RatioE_R_Phi"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度の誤差
+							{up2DetectorSensitivity->DetectorSensitivityDistribution(),_T("Ratio_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度
+							{up2DetectorSensitivity->DetectorSensitivityDistributionE(),_T("RatioE_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度の誤差
 
 
-							{up2Theta_deg_VarPhi->Get(), SetPreff(_T("histc_Theta_deg_VarPhi_deg")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正あり
-							{up2Theta_deg_VarPhi->GetE(), SetPreff(_T("histcE_Theta_deg_VarPhi_deg")), Wave_Comment},
+							{up2Theta_deg_VarPhi->Get(), SetName(_T("c_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正あり
+							{up2Theta_deg_VarPhi->GetE(), SetName(_T("cE_Th_VPh")), Wave_Comment},
 						}
 					);
 					file_output.WriteString(tstr.c_str());
