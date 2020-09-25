@@ -1,0 +1,171 @@
+;**********************************************************
+;HEXで使用する座標(Coordinates)と解析(DAn)パラメータ
+;デフォルトから変更したらCHANGEDを付記
+;スポットつぶれるのでnormal resolutionより高い分解能を採用
+;**********************************************************
+
+
+
+Parameter 2000,0		; !!! Do not Modify this line !!!
+
+Parameter 1050,201102080000	; check-ID (tests compatibility of CCF/DAn)
+
+Parameter 1000,2		; Parameter 1000 = Conversion Parameter for RAW data, 2 = Position in mm (standard)
+Parameter 1002,2		; Parameter 1002 = Hex-Anode calculations	CHANGED from 0 to 2
+				;	0 = no Hex-Anode
+				;	1 = Hex-Anode
+				;	2 = Hex-Anode (warning message omitted)
+Parameter 1003,2		; Parameter 1003 = for PHI conversion
+				;	0 = RAD [-pi..pi]
+				;	1 = RAD [0..2pi]
+				;	2 = DEG [-180..180]
+				;	3 = DEG [0..360]
+Parameter 1004,0		; Parameter 1004 = DNL correction (GP1/HM1 only with default 0.31
+				;	0 = no DNL correction
+				;	1 = Correction value (typically 0.31)
+Parameter 1005,-1		; Parameter 1005 = Start of DAq Data for DAn (Start Coordinate)
+				;	-1 = automatic
+Parameter 1006,-1		; Parameter 1006 = Start of DAn Data (Start Coordinate)
+				;	-1 = automatic
+Parameter 1007,1		; Parameter 1007 = Analyze hit #
+
+Parameter 1010,0.737		; Parameter 1010 = pTPCalX = Time to Point calibration factor for x (mm/ns)CHANGED(HEX80, MCP Delay Line Manual p.66)
+Parameter 1011,0.706		; Parameter 1011 = pTPCalY = Time to Point calibration factor for y (mm/ns)CHANGED
+Parameter 1012,0.684		; Parameter 1012 = pTPCalZ = Time to Point calibration factor for z (mm/ns)CHANGED
+
+; ------------
+; Preset DAn Resolution Parameters
+; for spectra definitions:
+; Parameters 1013-1019
+; ------------
+UserFCall,SetDAnResolutionParameters;
+; ------------
+; or SetDAnResolutionParameters via corresponding parsemathcommands like
+;parsemathcommand reset;
+;parsemathcommand p1013 = p1010*0.5*(int(p20*1000)*0.001);  // fine resolution binning  already set by DAN
+;parsemathcommand p1014 = p1011*0.5*(int(p20*1000)*0.001);  // fine resolution binning	already set by DAN
+;parsemathcommand p1015 = p1010*2*(int(p20*1000)*0.001);  // normal resolution binning 	already set by DAN
+;parsemathcommand p1016 = p1011*2*(int(p20*1000)*0.001);  // normal resolution binning 	already set by DAN
+;parsemathcommand p1017 = p1012*2*(int(p20*1000)*0.001);  // normal resolution binning	already set by DAN
+;parsemathcommand p1018 = p1010*8*(int(p20*1000)*0.001);  // coarse resolution binning	already set by DAN
+;parsemathcommand p1019 = p1011*8*(int(p20*1000)*0.001);  // coarse resolution binning	already set by DAN	    
+;parsemathcommand execute;
+; ------------
+; or set parameters 1013-1019 manually 
+;Parameter 1013,0.05;	high resolution binning
+;Parameter 1014,0.05;	high resolution binning
+;Parameter 1015,0.369;	normal resolution binning	;0.737/0.369/0.246
+;Parameter 1016,0.353;	normal resolution binning	;0.706/0.353/0.235
+;Parameter 1017,0.342;	normal resolution binning	;0.684/0.342/0.228
+;Parameter 1018,0.8;	coarse resolution binning
+;Parameter 1019,0.8;	coarse resolution binning
+
+Parameter 1020,-2.36		; Parameter 1020 = pCOx = Rotation Offset Center for x
+Parameter 1021,-0.8		; Parameter 1021 = pCOy = Rotation Offset Center for y
+Parameter 1022,0		; Parameter 1022 = pRotA = Rotation Angle in mathematical direction
+				;	value in RAD if Parameter 1003 = 0 or 1
+				;	value in DEG if Parameter 1003 = 2 or 3
+
+
+Parameter 1023,-1.255		; PosX-value of center for r/phi coordinates
+Parameter 1024,0.242		; PosY-value of center for r/phi coordinates
+
+
+Parameter 1025,8		; MCP channel (sum calculation: sumx = x1(-MCP)+x2(-MCP), for para 1025 = 0: sumx = x1+x2. Same for y and z);TODO(MCP Delay Line manual p.69)
+Parameter 1026,7		; channel number for x1;	//ボードのチャンネル1が壊れている？（2019.1.23）
+Parameter 1027,2		; channel number for x2
+Parameter 1028,3		; channel number for y1
+Parameter 1029,4		; channel number for y2
+Parameter 1030,5		; channel number for z1
+Parameter 1031,6		; channel number for z2
+Parameter 1032,8		; channel number for TOF (0 if not used);MCP信号を使用
+
+Parameter 1035,0		; Parameter 1035 = pOPx = Offset for x Point (x translation in 2D position histogram)
+Parameter 1036,0		; Parameter 1036 = pOPy = Offset for y Point (y translation in 2D position histogram)
+;Parameter 1037,0		; Parameter 1037 = pOPw = Offset for w Point (w translation in w layer of hexanode only)
+Parameter 1038,0		; Parameter 1038 = pOSum = Offset for Sum/Diff calculations
+
+Parameter 1039,1		; Anti-Moire (0 = no, 1 = yes)
+Parameter 1040,1		; Reset EventCounter (1: reset after "new" command, 0: no reset)
+Parameter 1041,1.		; integration time in seconds for "RealTriggerRate" coordinate
+Parameter 1060,0.		; Condition flag: value will appear as value in coordinate "condition1"
+
+
+
+
+
+; ---------
+; DAn data:
+; ---------
+Coordinate AbsoluteEventTime;				defines the absolute event time and
+Coordinate DeltaEventTime;				the time between one event and the next
+Coordinate EventCounter;				event number since start or last event number reset
+Coordinate True;					internal coordinate
+Coordinate False;					internal coordinate
+Coordinate ConsistencyIndicator;			シグナルが存在するならヒット数に関わらず1，存在しないなら0をチャンネルに対応したビットへセット
+Coordinate PLLStatusLocked;				internal coordinate for HM1 (see manual), must always be defined
+Coordinate RealTriggerRate;				calculates the trigger (count) rate (please see parameter 1041)
+Coordinate condition1;					the value of this coordinate is set by a condition command
+
+Coordinate n1,n2,n3,n4,n5,n6,n7,n8;			number of hits in the TDC channels 1-8 (not higher than parameter 33)
+
+Coordinate x1,x2;					x = u for Hexanode
+Coordinate y1,y2;					y = v for Hexanode
+Coordinate z1,z2;					z = w for Hexanode (not used for para 1002 = 0)
+
+Coordinate TOF; 					Values in the TOF-TDC time calibrated in ns (see parameter 1032)
+Coordinate raw_x,raw_y;					difference of TDC channel values for x1&x2, y1&y2 (uncalibrated)
+Coordinate raw_w;					difference of TDC channel values z1&z2 (uncalibrated, not for Para 1002 = 0)
+Coordinate raw_sumx,raw_sumy;				sum of TDC channel values for x1&x2, y1&y2
+coordinate raw_sumw;					sum of TDC channel values for z1&z2 (uncalibrated, not for Para 1002 = 0)
+Coordinate raw_sumxyw;					sum of TDC channel values for x1 to z2 (for Para 1002 = 0: x1 to y2 only)
+Coordinate raw_diffxy;					sum of TDC channel values for x1&x2 minus sum of y1&y2 (not useful for Hexanode)CHANGED
+
+Coordinate sumx,sumy,sumw,sumxyw;			same as raw_sum・but calibrated in ns and shifted (according parameter values)
+Coordinate diffxy;					same as raw_diffxy but calibrated in ns and shifted (according parameter values)CHANGED
+Coordinate PosX,PosY;					calibrated position coordinates after shift/rotation (according parameter values)
+Coordinate r,phi;					calibrated position coordinates in R/Phi coordinate system
+Coordinate Xuv,Yuv,Xuw,Yuw,Xvw,Yvw;			(Xuv and Xuw only use the u coordinate) not for Para 1002 = 0
+Coordinate dX,dY;					control coordinates: difference between Xuv/Xvw and Yuv/Yvw (not for Para 1002 = 0)
+
+Coordinate reflection_in_MCP;		      		time between second and first hit in TDC correlated to MCP signal (as defined by para 1025)  
+Coordinate reflection_in_x1,reflection_in_x2;		control coordinates: time between hit on one delay-line
+Coordinate reflection_in_y1,reflection_in_y2;		contact and second hit on the other contact of the same
+Coordinate reflection_in_z1,reflection_in_z2;		delay-line, for all layers and all ends (not for Para 1002 = 0)
+
+
+
+
+
+SetHitMatrixCoordinatesAndSpectrum,Const??,Ch??n,n_matrix_x,n_matrix_y;	Defines HitMatrix Coordinates (ConstXX, n_matrix_x, n_matrix_y) and HitMatrix Spectrum according to parameter 32 and 33
+
+
+
+
+
+;************************************************************************************
+;Conditionを記述．
+;************************************************************************************
+
+;-------------------------
+;ConsistencyIndicator系統
+;-------------------------
+condition ConsistencyIndicator,62.5,63.5,clean;    true if x1,x2,y1,y2 and z1,z2 signals were registered (for Hex)
+
+;-------------------
+;sumx系統
+;-------------------
+;CommonStopの場合
+condition sumx,-130,-105,sumx_Gated
+condition sumy,-130,-115,sumy_Gated
+condition sumw,-130,-115,sumw_Gated
+condition sumx_Gated,and,sumy_Gated,sumxy_Gated
+condition sumxy_Gated,and,sumw_Gated,sumxyw_Gated;	時間和ゲート
+
+
+;-------------------------
+;イベントゲート組み合わせ
+;-------------------------
+;Tは時間和ゲート
+condition sumxyw_Gated,and,clean,cleanT;			cleanかつ時間和一定範囲内
+

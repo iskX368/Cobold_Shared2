@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{45c6c454-18ab-4613-90a1-f48936532cc8}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3f2b3b18-557b-4989-b005-995f2c03e534}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{6e5fc2b7-79b7-4242-a269-507f4cb2ac04}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{7b92c22c-765a-4538-a058-b3225bd13da5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TDC8PCI2Standard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDAq.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LAES2_Extension.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="res\CDAq.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CheckProcess.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoboldRecentFileList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoboldUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HighResolutionTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LMFileDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LMFPreEventData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LMInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memacc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDAq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserSHM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LAES2_Extension.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CDAq.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="UserSP_x86.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="UserSP_x64.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="MemAcc.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="HighResolutionTimer_x86.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="HighResolutionTimer_x64.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="GeneralIO_x86.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="GeneralIO_x64.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="CoboldUtilities_x86.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="CoboldUtilities_x64.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="UserSHM_x86.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="UserSHM_x64.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

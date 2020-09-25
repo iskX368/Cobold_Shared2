@@ -1,0 +1,26 @@
+;****************************************************
+;start後の動作を指定
+;実験室と居室で区別
+;gitに含めない
+;****************************************************
+
+
+sleep 3s;次にviewする前にデータ整理するための時間．大きなデータはより長い時間を要する．
+;show Message,OKOK
+;show parameters
+;show WeihParameters
+View hit statistics
+;View PosX/PosY MYclean (mm)
+;update 1s, 1d;秒ごとにクリアして更新
+;update 1s;秒ごとに更新
+;update 5000c;カウントごとに更新
+
+
+;IGORテキストウェーブを作成
+;sleep 15s;全スペクトル処理。大きなlmfは10s以上要する。igorで出力正しいかチェック。
+;描画処理終わってから使うこと
+;処理終わるタイミング分からないので，aitxでなく描画後コマンドラインからlitx使用する
+;UserFcall,aitx,_XY
+;UserFcall,aitx,_XYel
+;UserFCall,aitx,_TOF
+;UserFCall,aitx,_TOFel

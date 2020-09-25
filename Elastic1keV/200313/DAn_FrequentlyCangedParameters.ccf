@@ -1,0 +1,116 @@
+;*********************************
+;パラメータ
+;解析で適宜変更する
+;gitに含めない
+;*********************************
+
+
+;***********************************
+;p1101	1以上でビットフラグによって選択したCoordinate値を外部ファイルへ出力する．ゼロ以下ならファイル出力しない．Lib_StringsForOutputFile.hを参照
+;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;Posx		0
+;PosY		1
+;r		2
+;phi		3
+;TOF		4
+;TOF_NoOffset	5
+;Theta_deg	6
+;VarPhi_deg	7
+;ConsistencyIndicator	8
+;
+Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
+
+
+
+;***********************************
+;p1102	Conditionを数値でただ一つ選択する．Lib_CCFileCondition.hを参照
+;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;always			0
+;clean			1
+;mclean			2
+;mcleanT		3
+;mcleanT_elastic	4
+;
+Parameter 1102,4		;書き込むときのCondition
+
+
+
+
+;***********************************
+;p1103	解析対象の試料を選択する．DCS理論値をプロットするために指定する．DCSHistogram.hのenumclassを参照
+;新しく追加，削除するときはLib_ConversionToDCSプロジェクトに理論計算結果を追加する
+;次に上記ヘッダファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;
+;He	0
+;C	1
+;N	2
+;Ne	3
+;Cl	4
+;Ar	5
+;Xe	6
+;
+Parameter 1103,3		;解析対象の試料
+
+;******
+;VarPhi_degのフォーマット
+;0なら[0,360], それ以外なら[-180,180]
+;******
+Parameter 1104,0
+
+
+;*********************************
+;PosX, PosYの円解析中心
+;*********************************
+;e19060502
+;Parameter 1023,1.328		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.242		; PosY-value of center for r/phi coordinates
+
+;e19071204
+;Parameter 1023,-3		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.5		; PosY-value of center for r/phi coordinates
+
+;e190716
+;Parameter 1023,-1.624		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.25		; PosY-value of center for r/phi coordinates
+
+
+;e19072401
+;Parameter 1023,-1.79		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19072404
+;Parameter 1023,-1.42		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19111201
+;Parameter 1023,-3.635		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e1911120
+;Parameter 1023,-3.266		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e19112101
+;Parameter 1023,-3.8		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.8		; PosY-value of center for r/phi coordinates
+
+;e191225
+Parameter 1023,-4.22		; PosX-value of center for r/phi coordinates
+Parameter 1024,-1.18		; PosY-value of center for r/phi coordinates
+
+
+
+;***************************************************
+;w-layerのオフセット
+;dX = Xuv-Xvw = x-y-w
+;dY = Yuv-Yvw = (x-y-w)/sqrt(3.)
+;既存のpOPwをw0,このときdXのピークがdx0にあったら
+;dx0 = x-y-(w+w0)
+;より，新しいpOPwを(w0+dx0)にする
+;***************************************************
+
+;e190716
+Parameter 1037,-0.7		; Parameter 1037 = pOPw = Offset for w Point (w translation in w layer of hexanode only)
+
+
+

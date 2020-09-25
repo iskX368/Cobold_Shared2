@@ -1,0 +1,54 @@
+;*********************************************************************************
+;
+;HEXからDTC8PCI2で検出された生のシグナルの和と差のスペクトルを定義。
+;単位はchannel。
+;CFD入力閾値調整に使用（MCP Delay Line manual Figure 3.9, 3.10）。
+;
+;x1, x2, ..., z2を各チャネルで検出された指定ヒットナンバーのchannel値として
+;raw_x = (x1 - x2);
+;raw_y = (y1 - y2);
+;raw_w = (z1 - z2);
+;raw_sumx = x1+x2;
+;raw_sumy = y1+y2;
+;raw_sumw = z1+z2;
+;raw_diffxy = raw_sumx - raw_sumy;//Not usuful for Hexanode
+;raw_sumxyw = raw_sumx + raw_sumy + raw_sumw;
+;
+;
+;座標軸名ではx,yをそれぞれu,vと表記する。
+;Coordinateとしてraw_uなどは定義されていないことに注意。
+;
+;**********************************************************************************
+
+
+
+;差u,v,w
+define1 -5000,5000,4,raw_x,,none,always,raw_u (channels),,true
+define1 -5000,5000,4,raw_y,,none,always,raw_v (channels),,true
+define1 -5000,5000,4,raw_w,,none,always,raw_w (channels),,true
+;クリーンヒット
+define1 -5000,5000,4,raw_x,,none,clean,raw_u (channels),,true
+define1 -5000,5000,4,raw_y,,none,clean,raw_v (channels),,true
+define1 -5000,5000,4,raw_w,,none,clean,raw_w (channels),,true
+
+
+;和
+define1 -1000,9000,4,raw_sumx,,none,always,raw_sumu (channels),,true
+define1 -1000,9000,4,raw_sumy,,none,always,raw_sumv (channels),,true
+define1 -1000,9000,4,raw_sumw,,none,always,raw_sumw (channels),,true
+define1 -3000,27000,4,raw_sumxyw,,none,always,raw_sumuvw (channels),,true
+;クリーンヒット
+define1 -1000,9000,4,raw_sumx,,none,clean,raw_sumu (channels),,true
+define1 -1000,9000,4,raw_sumy,,none,clean,raw_sumv (channels),,true
+define1 -1000,9000,4,raw_sumw,,none,clean,raw_sumw (channels),,true
+define1 -3000,27000,4,raw_sumxyw,,none,clean,raw_sumuvw (channels),,true
+
+
+
+;差の二次元分布
+define2 -5000,5000,10,raw_x,raw_u (channels),-5000,5000,10,raw_y,raw_v (channels),none,always,raw_u / raw_v,true
+define2 -5000,5000,10,raw_x,raw_u (channels),-5000,5000,10,raw_w,raw_w (channels),none,always,raw_u / raw_w,true
+define2 -5000,5000,10,raw_y,raw_v (channels),-5000,5000,10,raw_w,raw_w (channels),none,always,raw_v / raw_w,true
+
+
+
