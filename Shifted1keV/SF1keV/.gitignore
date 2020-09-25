@@ -1,5 +1,9 @@
 *.tlog/
-
+Debug(x64)/
+Release(x64)/
+Debug/
+Release/
+x64/
 
 # Created by https://www.gitignore.io/api/c++,windows,visualstudio
 # Edit at https://www.gitignore.io/?templates=c++,windows,visualstudio
