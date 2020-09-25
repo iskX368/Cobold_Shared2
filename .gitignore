@@ -4,17 +4,28 @@ temp/
 *.tlog
 *.idb
 
+
 Elastic1keV/src_DAqDAn/Debug(x64)/
 Elastic1keV/src_DAqDAn/Release(x64)/
 Elastic1keV/src_DAqDAn/Debug/
 Elastic1keV/src_DAqDAn/Release/
 Elastic1keV/src_DAqDAn/x64/
+Elastic1keV/src_DAqDAn/DAq/Debug(x64)/
+Elastic1keV/src_DAqDAn/DAq/Release(x64)/
+Elastic1keV/src_DAqDAn/DAn/Debug(x64)/
+Elastic1keV/src_DAqDAn/DAn/Release(x64)/
+
 
 Shifted1keV/SF1keV/Debug(x64)/
 Shifted1keV/SF1keV/Release(x64)/
 Shifted1keV/SF1keV/Debug/
 Shifted1keV/SF1keV/Release/
 Shifted1keV/SF1keV/x64/
+Shifted1keV/SF1keV/DAq/Debug(x64)/
+Shifted1keV/SF1keV/DAq/Debug(x64)/
+Shifted1keV/SF1keV/DAn/Release(x64)/
+Shifted1keV/SF1keV/DAn/Release(x64)/
+
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,c++,windows
