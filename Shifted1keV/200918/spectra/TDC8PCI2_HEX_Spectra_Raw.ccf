@@ -1,0 +1,40 @@
+;***************************************************
+;
+;HEXからTDC8PCI2ボードに入力された生の信号に関するスペクトルを定義する
+;
+;
+;
+;***************************************************
+
+;各チャンネルヒット数
+try define1 0,32,1,Ch01n,,none,always,Ch01n
+try define1 0,32,1,Ch02n,,none,always,Ch02n
+try define1 0,32,1,Ch03n,,none,always,Ch03n
+try define1 0,32,1,Ch04n,,none,always,Ch04n
+try define1 0,32,1,Ch05n,,none,always,Ch05n
+try define1 0,32,1,Ch06n,,none,always,Ch06n
+try define1 0,32,1,Ch07n,,none,always,Ch07n
+try define1 0,32,1,Ch08n,,none,always,Ch08n
+
+
+define1 -2,66,1,ConsistencyIndicator,,none,always,ConsistencyIndicator;    
+define1 -2,129,1,M_ConsistencyIndicator,,none,always,M_ConsistencyIndicator;
+define1 -2,129,1,NextHitIndicator,,none,always,NextHitIndicator;   
+define1 -2,129,1,M_NextHitIndicator,,none,always,M_NextHitIndicator;
+;define1 0,100000,10,RealTriggerRate,,none,always,RealTriggerRate,true
+
+
+;ヒットナンバー1（最初のヒット）の信号についての各チャンネル値スペクトル
+try define1 -20000,20000,1,Ch01S01,Ch01S01 (x1 raw),none,always,Ch01S01,,true
+try define1 -20000,20000,1,Ch02S01,Ch02S01 (x2 raw),none,always,Ch02S01,,true
+try define1 -20000,20000,1,Ch03S01,Ch03S01 (y1 raw),none,always,Ch03S01,,true
+try define1 -20000,20000,1,Ch04S01,Ch04S01 (y2 raw),none,always,Ch04S01,,true
+try define1 -20000,20000,1,Ch05S01,Ch05S01 (z1 raw),none,always,Ch05S01,,true
+try define1 -20000,20000,1,Ch06S01,Ch06S01 (z2 raw),none,always,Ch06S01,,true
+try define1 -20000,20000,1,Ch07S01,Ch07S01 (TOF raw),none,always,Ch07S01,,true
+try define1 -20000,20000,1,Ch08S02,Ch08S02 (PHD),none,always,Ch08S02 (PHD),,true
+
+
+
+
+

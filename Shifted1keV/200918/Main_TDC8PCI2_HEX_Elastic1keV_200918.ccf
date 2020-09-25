@@ -1,0 +1,70 @@
+;*****************************************
+;
+;自前で用意したccfファイル
+;TDC8PCI2, Hex用
+;メインで使用
+;
+;*****************************************
+
+
+;Coordinate, Parameter, Condition, Spectrumを全部クリア
+restart
+
+;デフォルトパスをこのファイルの場所に設定
+SetPath CCFPATH
+
+
+;データ取得用（DAq）の関数をロード
+;LoadDAqModule DAq_TDC8PCI2.dll,Applicationpath
+LoadDAqModule DAq_SF1keV_200918.dll,Applicationpath
+
+
+;データ解析用（DAn）の関数をロード
+;LoadDAnModule DAn_Standard.dll,Applicationpath
+LoadDAnModule DAn_SF1keV_200918.dll,Applicationpath
+
+
+;TDC8PCI2ボード用パラメータ
+Parameter 1000,0		; !!! Do not Modify this line !!!
+Parameter 50,201311200000	; check-ID (tests compatibility of CCF/DAq)
+Parameter 53,1			; display only every (n)th event (for high rate measurements)
+Parameter 54,0			; internally used, do not change until otherwise told
+execute DAq.ccf
+
+
+;TDC8PCI2ボードまたはLMFファイルからInternalパラメータを取得（ボード関連のパラメータ？）
+new
+
+
+;ボード端子に入力された生データを格納する座標を定義
+SetDAqCoordinates,Ch??n,Ch??S??;	Define all needed RAW TDC coordinates
+Coordinate LevelInfo;			do not change or move this line
+
+
+
+;-----------------------DAnパラメータとconditionを定義---------------------------;
+execute DAn_Condition.ccf
+
+
+;---------------------------スペクトルを定義 -------------------------;
+execute Spectra.ccf
+
+
+parsemathcommand reset	;//これ以降とstartの間にあるparsemathcommandはイベントごとに実行される
+execute Spectra1.ccf
+
+;--------------------------------------------------------------- その他の前処理 ---------------------------------------------------------;
+
+;デフォルトのファイル保存先をLMFファイルのある場所に指定
+SetPath EXPORTPATH,LMFPATH
+
+
+;LMFを保存
+;描画処理する前に使うこと
+;UserFcall,slmf
+
+
+;------------------------------------------------------------- データ取得を開始 --------------------------------------------------------------;
+
+start
+execute View.ccf

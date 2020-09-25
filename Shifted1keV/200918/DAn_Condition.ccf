@@ -1,0 +1,442 @@
+;**********************************************************
+;HEXで使用する座標(Coordinates)と解析(DAn)パラメータ
+;デフォルトから変更したらCHANGEDを付記
+;スポットつぶれるのでnormal resolutionより高い分解能を採用
+;**********************************************************
+
+
+
+Parameter 2000,0		; !!! Do not Modify this line !!!
+
+Parameter 1050,201102080000	; check-ID (tests compatibility of CCF/DAn)
+
+Parameter 1000,2		; Parameter 1000 = Conversion Parameter for RAW data, 2 = Position in mm (standard)
+Parameter 1002,2		; Parameter 1002 = Hex-Anode calculations	CHANGED from 0 to 2
+				;	0 = no Hex-Anode
+				;	1 = Hex-Anode
+				;	2 = Hex-Anode (warning message omitted)
+Parameter 1003,2		; Parameter 1003 = for PHI conversion
+				;	0 = RAD [-pi..pi]
+				;	1 = RAD [0..2pi]
+				;	2 = DEG [-180..180]
+				;	3 = DEG [0..360]
+Parameter 1004,0		; Parameter 1004 = DNL correction (GP1/HM1 only with default 0.31
+				;	0 = no DNL correction
+				;	1 = Correction value (typically 0.31)
+Parameter 1005,-1		; Parameter 1005 = Start of DAq Data for DAn (Start Coordinate)
+				;	-1 = automatic
+Parameter 1006,-1		; Parameter 1006 = Start of DAn Data (Start Coordinate)
+				;	-1 = automatic
+Parameter 1007,1		; Parameter 1007 = Analyze hit #
+
+Parameter 1010,0.737		; Parameter 1010 = pTPCalX = Time to Point calibration factor for x (mm/ns)CHANGED(HEX80, MCP Delay Line Manual p.66)
+Parameter 1011,0.706		; Parameter 1011 = pTPCalY = Time to Point calibration factor for y (mm/ns)CHANGED
+Parameter 1012,0.684		; Parameter 1012 = pTPCalZ = Time to Point calibration factor for z (mm/ns)CHANGED
+
+; ------------
+; Preset DAn Resolution Parameters
+; for spectra definitions:
+; Parameters 1013-1019
+; ------------
+UserFCall,SetDAnResolutionParameters;
+; ------------
+; or SetDAnResolutionParameters via corresponding parsemathcommands like
+;parsemathcommand reset;
+;parsemathcommand p1013 = p1010*0.5*(int(p20*1000)*0.001);  // fine resolution binning  already set by DAN
+;parsemathcommand p1014 = p1011*0.5*(int(p20*1000)*0.001);  // fine resolution binning	already set by DAN
+;parsemathcommand p1015 = p1010*2*(int(p20*1000)*0.001);  // normal resolution binning 	already set by DAN
+;parsemathcommand p1016 = p1011*2*(int(p20*1000)*0.001);  // normal resolution binning 	already set by DAN
+;parsemathcommand p1017 = p1012*2*(int(p20*1000)*0.001);  // normal resolution binning	already set by DAN
+;parsemathcommand p1018 = p1010*8*(int(p20*1000)*0.001);  // coarse resolution binning	already set by DAN
+;parsemathcommand p1019 = p1011*8*(int(p20*1000)*0.001);  // coarse resolution binning	already set by DAN	    
+;parsemathcommand execute;
+; ------------
+; or set parameters 1013-1019 manually 
+;Parameter 1013,0.05;	high resolution binning
+;Parameter 1014,0.05;	high resolution binning
+Parameter 1015,0.369;	normal resolution binning	;0.737/0.369/0.246
+Parameter 1016,0.353;	normal resolution binning	;0.706/0.353/0.235
+Parameter 1017,0.342;	normal resolution binning	;0.684/0.342/0.228
+;Parameter 1018,0.8;	coarse resolution binning
+;Parameter 1019,0.8;	coarse resolution binning
+
+Parameter 1020,-2.36		; Parameter 1020 = pCOx = Rotation Offset Center for x
+Parameter 1021,-0.8		; Parameter 1021 = pCOy = Rotation Offset Center for y
+Parameter 1022,0		; Parameter 1022 = pRotA = Rotation Angle in mathematical direction
+				;	value in RAD if Parameter 1003 = 0 or 1
+				;	value in DEG if Parameter 1003 = 2 or 3
+
+
+;Parameter 1023,-1.255		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.242		; PosY-value of center for r/phi coordinates
+
+
+Parameter 1025,8		; MCP channel (sum calculation: sumx = x1(-MCP)+x2(-MCP), for para 1025 = 0: sumx = x1+x2. Same for y and z);TODO(MCP Delay Line manual p.69)
+Parameter 1026,7		; channel number for x1;	//ボードのチャンネル1が壊れている？（2019.1.23）
+Parameter 1027,2		; channel number for x2
+Parameter 1028,3		; channel number for y1
+Parameter 1029,4		; channel number for y2
+Parameter 1030,5		; channel number for z1
+Parameter 1031,6		; channel number for z2
+Parameter 1032,8		; channel number for TOF (0 if not used);MCP信号を使用
+
+Parameter 1035,0		; Parameter 1035 = pOPx = Offset for x Point (x translation in 2D position histogram)
+Parameter 1036,0		; Parameter 1036 = pOPy = Offset for y Point (y translation in 2D position histogram)
+;Parameter 1037,0		; Parameter 1037 = pOPw = Offset for w Point (w translation in w layer of hexanode only)
+Parameter 1038,0		; Parameter 1038 = pOSum = Offset for Sum/Diff calculations
+
+Parameter 1039,1		; Anti-Moire (0 = no, 1 = yes)
+Parameter 1040,1		; Reset EventCounter (1: reset after "new" command, 0: no reset)
+Parameter 1041,1.		; integration time in seconds for "RealTriggerRate" coordinate
+Parameter 1060,0.		; Condition flag: value will appear as value in coordinate "condition1"
+
+
+; ----------------------------
+;ユーザーパラメータ
+;1100~1999まで
+;DAn.dllで使われるならここに書く
+;1900~1999を汎用バッファとする
+; ----------------------------
+;***********************************
+;PosX,PosYに採用する値．配布時設定は0．0:uv-pair, 1:vw-pair, 2:uw-pair．rotationはこの後適用される
+Parameter 1100,1		;PosX,PosYに採用する値
+
+
+
+
+;***********************************
+;p1101~	1以上でビットフラグによって選択したCoordinate値を外部ファイルへ出力する．ゼロ以下ならファイル出力しない．Lib_Inputs.hを参照
+;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Coordinate_Maxも変更する
+;Posx		0
+;PosY		1
+;r		2
+;phi		3
+;TOF		4
+;TOF_NoOffset	5
+;Theta_deg	6
+;VarPhi_deg	7
+;ConsistencyIndicator	8
+;
+;
+Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1103,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1105,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1107,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1109,0		;外部ファイルへどのCoordinatesを書き込むか
+
+
+
+;***********************************
+;p1102~	Conditionを数値でただ一つ選択する．Lib_Inputs.hを参照
+;新しく追加，削除するときは
+;1. 上記ファイルのenumclassを変更
+;2. Flag_Condition_Maxを変更
+;
+;
+Parameter 1102,30		;書き込むときのCondition
+Parameter 1104,25		;書き込むときのCondition
+Parameter 1106,29		;書き込むときのCondition
+Parameter 1108,24		;書き込むときのCondition
+Parameter 1110,0		;書き込むときのCondition
+
+
+
+
+;***********************************
+;p1103	解析対象の試料を選択する．DCS理論値をプロットするために指定する．Lib_Inputのenumclassを参照
+;新しく追加，削除するときは
+;1. 上記ヘッダファイルのenumclassを変更
+;2. Flag_Condition_Maxを変更
+;3. DCS回帰分析結果も追加する
+;
+;He	0
+;C	1
+;N	2
+;Ne	3
+;Cl	4
+;Ar	5
+;Xe	6
+;
+Parameter 1111,5		;解析対象の試料
+
+
+
+
+;*********************************
+;PosX, PosYの円解析中心
+;e19060502
+;Parameter 1023,1.328		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.242		; PosY-value of center for r/phi coordinates
+
+;e19071204
+;Parameter 1023,-3		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.5		; PosY-value of center for r/phi coordinates
+
+;e190716
+;Parameter 1023,-1.624		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.25		; PosY-value of center for r/phi coordinates
+
+
+;e19072401
+;Parameter 1023,-1.79		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19072404
+;Parameter 1023,-1.42		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19111201
+;Parameter 1023,-3.635		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e1911120
+;Parameter 1023,-3.266		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e19112101
+;Parameter 1023,-3.8		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.8		; PosY-value of center for r/phi coordinates
+
+;e191225
+Parameter 1023,-4.22		; PosX-value of center for r/phi coordinates
+Parameter 1024,-1.18		; PosY-value of center for r/phi coordinates
+
+
+
+;*********************************************
+;w-layerのオフセット
+;dX = Xuv-Xvw = x-y-w
+;dY = Yuv-Yvw = (x-y-w)/sqrt(3.)
+;既存のpOPwをw0,このときdXのピークがdx0にあったら
+;dx0 = x-y-(w+w0)
+;より，新しいpOPwを(w0+dx0)にする
+;e190716
+Parameter 1037,-0.7		; Parameter 1037 = pOPw = Offset for w Point (w translation in w layer of hexanode only)
+
+
+
+Parameter 1114,1.4			;検出器半径R分布のbin[mm]
+Parameter 1115,40			;検出器半径R分布の最大値[mm]
+
+Parameter 1116,2			; Parameter 1116 = for VarPhi_deg conversion ; degついているのは後で改名
+					;	0 = RAD [-pi..pi]
+					;	1 = RAD [0..2pi]
+					;	2 = DEG [-180..180]
+					;	3 = DEG [0..360]
+
+
+Parameter 1117,10			;方位角の刻み数  6なら 360 deg/6 = 60 deg ごとにbinをとる
+
+
+
+Parameter 1118,0.5			;検出器PosXのbin[mm]
+Parameter 1119,0.5			;検出器PosYのbin[mm]
+
+Parameter 1120,6000			;IR有りのときにTDCボードのトリガにかませた遅延発生器DG645の値[ns]
+Parameter 1121,3000			;IR無しのときにTDCボードのトリガにかませた遅延発生器DG645の値[ns]
+
+
+
+
+
+; ---------
+; DAn data:
+; ---------
+Coordinate AbsoluteEventTime;				defines the absolute event time and
+Coordinate DeltaEventTime;				the time between one event and the next
+Coordinate EventCounter;				event number since start or last event number reset
+Coordinate True;					internal coordinate
+Coordinate False;					internal coordinate
+Coordinate ConsistencyIndicator;			シグナルが存在するならヒット数に関わらず1，存在しないなら0をチャンネルに対応したビットへセット
+Coordinate PLLStatusLocked;				internal coordinate for HM1 (see manual), must always be defined
+Coordinate RealTriggerRate;				calculates the trigger (count) rate (please see parameter 1041)
+Coordinate condition1;					the value of this coordinate is set by a condition command
+
+Coordinate n1,n2,n3,n4,n5,n6,n7,n8;			number of hits in the TDC channels 1-8 (not higher than parameter 33)
+
+Coordinate x1,x2;					x = u for Hexanode
+Coordinate y1,y2;					y = v for Hexanode
+Coordinate z1,z2;					z = w for Hexanode (not used for para 1002 = 0)
+
+Coordinate TOF; 					Values in the TOF-TDC time calibrated in ns (see parameter 1032)
+Coordinate raw_x,raw_y;					difference of TDC channel values for x1&x2, y1&y2 (uncalibrated)
+Coordinate raw_w;					difference of TDC channel values z1&z2 (uncalibrated, not for Para 1002 = 0)
+Coordinate raw_sumx,raw_sumy;				sum of TDC channel values for x1&x2, y1&y2
+coordinate raw_sumw;					sum of TDC channel values for z1&z2 (uncalibrated, not for Para 1002 = 0)
+Coordinate raw_sumxyw;					sum of TDC channel values for x1 to z2 (for Para 1002 = 0: x1 to y2 only)
+Coordinate raw_diffxy;					sum of TDC channel values for x1&x2 minus sum of y1&y2 (not useful for Hexanode)CHANGED
+
+Coordinate sumx,sumy,sumw,sumxyw;			same as raw_sum・but calibrated in ns and shifted (according parameter values)
+Coordinate diffxy;					same as raw_diffxy but calibrated in ns and shifted (according parameter values)CHANGED
+Coordinate PosX,PosY;					calibrated position coordinates after shift/rotation (according parameter values)
+Coordinate r,phi;					calibrated position coordinates in R/Phi coordinate system
+Coordinate Xuv,Yuv,Xuw,Yuw,Xvw,Yvw;			(Xuv and Xuw only use the u coordinate) not for Para 1002 = 0
+Coordinate dX,dY;					control coordinates: difference between Xuv/Xvw and Yuv/Yvw (not for Para 1002 = 0)
+
+Coordinate reflection_in_MCP;		      		time between second and first hit in TDC correlated to MCP signal (as defined by para 1025)  
+Coordinate reflection_in_x1,reflection_in_x2;		control coordinates: time between hit on one delay-line
+Coordinate reflection_in_y1,reflection_in_y2;		contact and second hit on the other contact of the same
+Coordinate reflection_in_z1,reflection_in_z2;		delay-line, for all layers and all ends (not for Para 1002 = 0)
+
+
+; -------------
+;ユーザー座標
+; -------------
+Coordinate M_ConsistencyIndicator;			MCP信号を最上位ビットに追加
+Coordinate NextHitIndicator;				UseHitの次のヒットナンバーについて，シグナル存在すれば1，なければ0．p1130に関わらず計算する．
+Coordinate M_NextHitIndicator;				MCP信号を最上位ビットに追加
+Coordinate TOF_NoOffset;				飛行時間から遅延発生器によるオフセットを引き算
+
+Coordinate Theta_deg;					散乱後エネルギー1keVの極角の計算値
+Coordinate VarPhi_deg;					散乱後エネルギー1keVの方位角の計算値
+
+Coordinate KineticEnergy;				散乱後の運動エネルギー [eV]
+
+
+
+SetHitMatrixCoordinatesAndSpectrum,Const??,Ch??n,n_matrix_x,n_matrix_y;	Defines HitMatrix Coordinates (ConstXX, n_matrix_x, n_matrix_y) and HitMatrix Spectrum according to parameter 32 and 33
+
+
+
+
+
+;************************************************************************************
+;Conditionを記述．
+;************************************************************************************
+
+;-------------------------
+;ConsistencyIndicator系統
+;-------------------------
+condition ConsistencyIndicator,62.5,63.5,clean;    true if x1,x2,y1,y2 and z1,z2 signals were registered (for Hex)
+condition M_ConsistencyIndicator,126.5,127.5,mclean;	MCP信号含む
+condition M_NextHitIndicator,-0.5,0.5,singleEvent;	後続イベントなし（Parameter1007の次のヒットがどのチャンネルにも存在しない）
+
+
+
+condition ConsistencyIndicator,-100,-99,arienai0;	あり得ない条件
+condition ConsistencyIndicator,-99,-98,arienai1;	あり得ない条件
+condition arienai0,nand,arienai1,alw;			alwaysと同じ．alwaysをandしたらフリーズしたから．
+
+
+;-------------------
+;sumx系統
+;-------------------
+;CommonStopの場合
+condition sumx,-130,-105,sumx_Gated
+condition sumy,-130,-115,sumy_Gated
+condition sumw,-130,-115,sumw_Gated
+condition sumx_Gated,and,sumy_Gated,sumxy_Gated
+condition sumxy_Gated,and,sumw_Gated,sumxyw_Gated;	時間和ゲート
+
+
+;------------------
+;dX系統
+;------------------
+condition dX,-1.0,1.0,dX_Gated
+condition dY,-1.0,1.0,dY_Gated
+condition dX_Gated,and,dY_Gated,dXdY_Gated;			検出位置の差ゲート
+
+
+
+;-------------------------
+;イベントゲート組み合わせ
+;-------------------------
+;Sはシングルヒットイベントのみ
+;Tは時間和ゲート
+;Dはレイヤ位置の差
+;mはMCP信号のconsistencyも考慮
+
+condition singleEvent,and,clean,cleanS;				cleanかつセカンドヒット一つもなし
+condition singleEvent,and,mclean,mcleanS;			mcleanかつセカンドヒット一つもなし
+condition sumxyw_Gated,and,clean,cleanT;			cleanかつ時間和一定範囲内
+condition sumxyw_Gated,and,mclean,mcleanT;			mcleanかつ時間和一定範囲内			これ使う
+condition sumxyw_Gated,and,cleanS,cleanST;
+condition sumxyw_Gated,and,mcleanS,mcleanST;
+condition dXdY_Gated,and,cleanT,cleanTD;
+condition dXdY_Gated,and,cleanT,mcleanTD;
+condition dXdY_Gated,and,cleanST,cleanSTD;
+condition dXdY_Gated,and,mcleanST,mcleanSTD;
+
+
+
+;-----------------------
+;飛行時間ゲート
+;-----------------------
+
+condition TOF,5000,6000,WithIR;				遅延発生器の設定によってIR有りのときはこの範囲に属する
+condition TOF,2000,3000,WithoutIR;			遅延発生器の設定によってIR無しのときはこの範囲に属する
+
+
+condition TOF_NoOffset,-370,-270,elastic;			弾性散乱 Ei=1000 eV, Ef=1000 eV
+
+
+condition KineticEnergy,1002.6,1003.6,KESp2;			エネルギーシフト Ei=1000 eV, Ef=1003.10 eV
+condition KineticEnergy,1001.05,1002.05,KESp1;			エネルギーシフト Ei=1000 eV, Ef=1001.55 eV
+condition KineticEnergy,999,1001,KES0;				エネルギーシフト Ei=1000 eV, Ef=1000 eV		これだけ幅広(2 eV)にとる
+condition KineticEnergy,997.95,998.95,KESn1;			エネルギーシフト Ei=1000 eV, Ef=998.45 eV
+condition KineticEnergy,996.4,997.4,KESn2;			エネルギーシフト Ei=1000 eV, Ef=996.9 eV
+
+;--------------------------
+;検出器ふちの信号を除去
+;--------------------------
+condition r,0,24,NoREdge;				ふちは汚いので削る
+
+condition NoREdge,and,KESp2,KESp2R;
+condition NoREdge,and,KESp1,KESp1R;
+condition NoREdge,and,KES0,KES0R;
+condition NoREdge,and,KESn1,KESn1R;
+condition NoREdge,and,KESn2,KESn2R;
+
+
+
+
+;-------------------------------------------
+;飛行時間ゲートとイベントゲートの組み合わせ
+;-------------------------------------------
+condition elastic,and,cleanS,cleanS_elastic;
+condition elastic,and,mcleanS,mcleanS_elastic;
+condition elastic,and,cleanT,cleanT_elastic;
+condition elastic,and,mcleanT,mcleanT_elastic;			これ使う
+condition elastic,and,cleanST,cleanST_elastic;
+condition elastic,and,mcleanST,mcleanST_elastic;
+condition elastic,and,cleanTD,cleanTD_elastic;
+condition elastic,and,mcleanTD,mcleanTD_elastic;
+condition elastic,and,cleanSTD,cleanSTD_elastic;
+condition elastic,and,mcleanSTD,mcleanSTD_elastic;
+
+
+condition WithIR,and,mcleanT,mcleanT_WithIR;
+condition WithoutIR,and,mcleanT,mcleanT_WithoutIR;
+
+condition mcleanT_WithIR,and,NoREdge,mcTr_WithIR;
+condition mcleanT_WithoutIR,and,NoREdge,mcTr_WithoutIR;
+
+
+;---------------------------------------------
+;1.55n(n=+-1,+-2)のエネルギーシフトごとの
+;飛行時間ゲートとイベントゲートの組み合わせ
+;飛行時間でなくてkeで分類したい
+;p1が +1.55 eV, n2が -3.10 eV など
+;---------------------------------------------
+condition KESp2R,and,mcleanT,mcleanT_KESp2R;
+condition KESp1R,and,mcleanT,mcleanT_KESp1R;
+condition KES0R,and,mcleanT,mcleanT_KES0R;
+condition KESn1R,and,mcleanT,mcleanT_KESn1R;
+condition KESn2R,and,mcleanT,mcleanT_KESn2R;
+
+
+
+;--------------------------------------------------------------------------------
+;IRありとなしに対してmcleanT, ふちなし, エネルギーシフト考慮のconditionは分岐する
+;--------------------------------------------------------------------------------
+condition mcleanT_KESp2R,and,WithIR,mcleanT_WithIR_KESp2R;
+condition mcleanT_KESp1R,and,WithIR,mcleanT_WithIR_KESp1R;
+condition mcleanT_KES0R,and,WithIR,mcleanT_WithIR_KES0R;
+condition mcleanT_KESn1R,and,WithIR,mcleanT_WithIR_KESn1R;
+condition mcleanT_KESn2R,and,WithIR,mcleanT_WithIR_KESn2R;
+condition mcleanT_KESp2R,and,WithoutIR,mcleanT_WithoutIR_KESp2R;
+condition mcleanT_KESp1R,and,WithoutIR,mcleanT_WithoutIR_KESp1R;
+condition mcleanT_KES0R,and,WithoutIR,mcleanT_WithoutIR_KES0R;
+condition mcleanT_KESn1R,and,WithoutIR,mcleanT_WithoutIR_KESn1R;
+condition mcleanT_KESn2R,and,WithoutIR,mcleanT_WithoutIR_KESn2R;
+

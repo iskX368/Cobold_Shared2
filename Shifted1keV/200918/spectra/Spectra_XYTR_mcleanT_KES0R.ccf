@@ -1,0 +1,73 @@
+;*************************************************************
+;
+;XYTスペクトルを定義。
+;conditionはclean
+;
+;x1, x2, ..., z2を各チャネルで検出された指定ヒットナンバーのチャンネル値、
+;TDC8PCI2の分解能（Parameter 20 0.5;//Internally set）をdTDCResolution[ns/channel]として
+;各チャンネルの時刻Ch1Time, ..., Ch6Timeは
+;Ch1Time = x1 * dTDCResolution;
+;Ch2Time = x2 * dTDCResolution;
+;Ch3Time = y1 * dTDCResolution;
+;Ch4Time = y2 * dTDCResolution;
+;Ch5Time = z1 * dTDCResolution;
+;Ch6Time = z2 * dTDCResolution;
+;
+;信号伝達の速さ(Parameter 1010,1011,1012)をそれぞれdTPCalX,dTPCalY,dTPCalZ[mm/ns]として、単位を位置へ変換すると
+;Ch1Pos = Ch1Time * dTPCalX;
+;Ch2Pos = Ch2Time * dTPCalX;
+;Ch3Pos = Ch3Time * dTPCalY;
+;Ch4Pos = Ch4Time * dTPCalY;
+;Ch5Pos = Ch5Time * dTPCalZ;
+;Ch6Pos = Ch6Time * dTPCalZ;
+;
+;位置オフセット（Parameter 1035,1036,1037）をそれぞれdOPx,dOPy,dOPwとして、検出位置Posx,Posyは差の中間値
+;x__ = (Ch1Pos - Ch2Pos) * 0.5;
+;y__ = (Ch3Pos - Ch4Pos) * 0.5;
+;を用いて
+;PosX = x__ + dOPx;
+;PosY = (x__ - 2 * y__) / sqrt(3) + dOPy;
+;と計算される。回転値（Parameter 1022）がゼロ以外の場合、上記検出位置を回転した値がPosx,Posyとしてセットされる。
+;
+;回転関数OrthoToRPhiを用いて、Rとphiも計算される（TODO:計算式記述）。
+;
+;さらに
+;w__ = (Ch5Pos - Ch6Pos) * 0.5 + dOPw;
+;として、Hexにおいて異なる組み合わせのレイヤーによる位置は
+;Xuv = PosX;
+;Yuv = PosY;
+;Xuw = Xuv;
+;Yuw = (2 * w__ - x__) / sqrt(3) + dOPy;
+;Xvw = (y__ + w__) + dOPx;
+;Yvw = (w__ - y__) / sqrt(3) + dOPy;
+;と求められる。
+;
+;異なるレイヤー組み合わせで求めた位置の誤差は
+;dX = Xuv - Xvw;
+;dY = Yuv - Yvw;
+;
+;Hexによる位置u,v,wのBinSize[mm/channel]は、ソースファイルUserFCall\Functions.cppの
+;関数SetDAnResolutionParametersの計算によって、それぞれParameter 1015,1016,1017に格納されており
+;p1015 = dTDCResolution * dTPCalX * 2;//Normal Resolution
+;p1016 = dTDCResolution * dTPCalY * 2;//Normal Resolution
+;p1017 = dTDCResolution * dTPCalZ * 2;//Normal Resolution
+;(TODO:wについてcorse resolution, high resolutionで分解能が定義されていないのはなぜ？)
+;(TODO:各設定分解能に掛け算されている2, 0.5, 8の意味は？)
+;
+;*************************************************************
+
+
+;WithIR and WithoutIR
+
+
+;位置
+define2 -40,40,p1015,PosX,PosX [mm],-40,40,p1016,PosY,PosY [mm],none,mcleanT_WithIR_KES0R,XYmcT_w_0R
+define2 -40,40,p1015,PosX,PosX [mm],-40,40,p1016,PosY,PosY [mm],none,mcleanT_WithoutIR_KES0R,XYmcT_o_0R
+
+;飛行時間オフセットなし
+define1 -3000,3000,p20,TOF_NoOffset,TOF0[ns],none,mcleanT_WithIR_KES0R,TOF0mcT_w_0R
+define1 -3000,3000,p20,TOF_NoOffset,TOF0[ns],none,mcleanT_WithoutIR_KES0R,TOF0mcT_o_0R
+
+;半径
+define1 0,40,p1114,r,r [mm],none,mcleanT_WithIR_KES0R,RmcT_w_0R
+define1 0,40,p1114,r,r [mm],none,mcleanT_WithoutIR_KES0R,RmcT_o_0R
