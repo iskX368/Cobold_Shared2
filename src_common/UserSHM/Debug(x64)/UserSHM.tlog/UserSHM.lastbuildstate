@@ -1,2 +1,2 @@
-#TargetFrameworkVersion=v4.0:PlatformToolSet=v142:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=10.0
-Debug(x64)|x64|C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared1\src_common\|
+PlatformToolSet=v142:VCToolArchitecture=Native32Bit:VCToolsVersion=14.27.29110:TargetPlatformVersion=10.0.18362.0:
+Debug(x64)|x64|C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared2\src_common\|
