@@ -3,7 +3,8 @@
 temp/
 *.tlog
 *.idb
-
+*.recipe
+*.exp
 
 Elastic1keV/src_DAqDAn/Debug(x64)/
 Elastic1keV/src_DAqDAn/Release(x64)/
