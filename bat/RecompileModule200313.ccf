@@ -1,0 +1,14 @@
+;//ソフトウェアのライブラリへの依存を解消する
+;//バッチファイルからDAq,DAnのdllをコンパイルする
+
+restart
+
+LoadDAqModule DAq_TDC8PCI2.dll,Applicationpath
+LoadDAnModule DAn_Standard.dll,Applicationpath
+SetPath CCFPATH
+
+;//短すぎると停止するので注意
+sleep 1s
+
+;//cmd.exe
+ShellCommand cd "C:\Program Files\RoentDek Handels GmbH\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\LAES2_TDC8PCI2_HEX\Cobold_Shared2\bat" && Compile_DAqDAn_Elastic1keV_200313.bat
