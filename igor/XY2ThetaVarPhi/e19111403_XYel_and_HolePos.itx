@@ -1,0 +1,16 @@
+IGOR
+WAVES/D	WcoefR_e19111403_SimpleCircle	WsigmaR_e19111403_SimpleCircle
+BEGIN
+	0	0
+	0.5073231279348395	0.03955262593022132
+	0.05529602236903003	0.002931830039930148
+END
+X SetScale/P x 0,1,"", WcoefR_e19111403_SimpleCircle; SetScale y 0,0,"", WcoefR_e19111403_SimpleCircle
+X SetScale/P x 0,1,"", WsigmaR_e19111403_SimpleCircle; SetScale y 0,0,"", WsigmaR_e19111403_SimpleCircle
+
+WAVES	Center_e19111403_SimpleCircle
+BEGIN
+	-4.2069998
+	-0.111
+END
+X SetScale/P x 0,1,"", Center_e19111403_SimpleCircle; SetScale y 0,0,"", Center_e19111403_SimpleCircle
