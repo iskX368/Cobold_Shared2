@@ -17,8 +17,8 @@ namespace LAES2 {
 	//IgorProウェーブ名称長さ最大値
 	constexpr unsigned __int32 Igor_WaveName_Max_Length = 31;
 	//情報出力先
-	constexpr TCHAR fname_DAqInfo[] = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\DAqinfo.dat");
-	constexpr TCHAR fname_itx[] = "C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\temp.itx";
+	constexpr TCHAR fname_DAqInfo[] = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\DAqinfo.dat");
+	constexpr TCHAR fname_itx[] = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\temp.itx");
 	//フラグ割り当て
 	constexpr TCHAR COBOLD_online = '1';
 	constexpr TCHAR COBOLD_offline = '0';
