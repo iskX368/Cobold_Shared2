@@ -2905,11 +2905,19 @@ namespace LAES2 {
 					else {
 						//ウェーブ名冒頭はソースlmf名称
 						std::basic_string<TCHAR> preff = CurrentDAqInfo::SourceLMFileName();
-						
-						m_HistoP_wp2->WriteToIgorTextFile(m_F_Histo_ITX, true, m_str_wp2, preff, m_str_wp2, false);
-						m_HistoP_op2->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op2, preff, m_str_op2, false);
-						m_HistoP_wp1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_wp1, preff, m_str_wp1, false);
-						m_HistoP_op1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op1, preff, m_str_op1, false);
+						std::basic_string<TCHAR> suff;
+
+						suff = _T("wp2");
+						m_HistoP_wp2->WriteToIgorTextFile(m_F_Histo_ITX, true, m_str_wp2, preff, suff, false);
+
+						suff = _T("op2");
+						m_HistoP_op2->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op2, preff, suff, false);
+
+						suff = _T("wp1");
+						m_HistoP_wp1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_wp1, preff, suff, false);
+
+						suff = _T("op1");
+						m_HistoP_op1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op1, preff, suff, false);
 
 						m_F_Histo_ITX.Close();
 					}
@@ -2970,13 +2978,13 @@ namespace LAES2 {
 		const LibFlag::Condition m_op1 = LibFlag::Condition::mcleanT_WithoutIR_KESp1R;
 
 		//出力先
-		const std::basic_string<TCHAR> m_FileName_Histo_ITX = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\DCSHisto_LAES.itx");
+		const std::basic_string<TCHAR> m_FileName_Histo_ITX = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\DCSHisto_LAES.itx");
 		
-		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithIR_KESp2R.txt");
-		const std::basic_string<TCHAR> m_FileName_Event_TXT_op2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithoutIR_KESp2R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\Events_LAES_mcleanT_WithIR_KESp2R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_op2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\Events_LAES_mcleanT_WithoutIR_KESp2R.txt");
 
-		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithIR_KESp1R.txt");
-		const std::basic_string<TCHAR> m_FileName_Event_TXT_op1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithoutIR_KESp1R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\Events_LAES_mcleanT_WithIR_KESp1R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_op1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\Events_LAES_mcleanT_WithoutIR_KESp1R.txt");
 
 	private:
 		bool m_isOK;

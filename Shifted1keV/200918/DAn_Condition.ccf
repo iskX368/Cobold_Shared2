@@ -118,10 +118,10 @@ Parameter 1100,1		;PosX,PosYに採用する値
 ;ConsistencyIndicator	8
 ;
 ;
-Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
-Parameter 1103,47		;外部ファイルへどのCoordinatesを書き込むか
-Parameter 1105,47		;外部ファイルへどのCoordinatesを書き込むか
-Parameter 1107,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1101,0		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1103,0		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1105,0		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1107,0		;外部ファイルへどのCoordinatesを書き込むか
 Parameter 1109,0		;外部ファイルへどのCoordinatesを書き込むか
 
 
