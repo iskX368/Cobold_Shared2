@@ -105,6 +105,7 @@ public:
 
 using Conv_1000_1000 = ConversionToDCS1<Parameters_ConversionToDCS_e19111401>;//入射エネルギー 1000 eV, 出射エネルギー 1000 eV
 using Conv_1000_1001p55 = ConversionToDCS1<Parameters_ConversionToDCS_e19111402>;//入射エネルギー 1000 eV, 出射エネルギー 1001.55 eV
+using Conv_1000_1003p10 = ConversionToDCS1<Parameters_ConversionToDCS_e19111403>;//入射エネルギー 1000 eV, 出射エネルギー 1001.55 eV
 
 
 

@@ -115,6 +115,7 @@ public:
 
 using DCSHistogram_1000_1000 = DCSHistogram<Conv_1000_1000>;
 using DCSHistogram_1000_1001p55 = DCSHistogram<Conv_1000_1001p55>;
+using DCSHistogram_1000_1003p10 = DCSHistogram<Conv_1000_1003p10>;
 
 
 

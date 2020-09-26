@@ -141,6 +141,7 @@ double TheoreticalAtomicDCS_Elastic32<Params>::dsigmadOmega(const double Theta_d
 //////////////////////////////////////////////
 template class ConversionToDCS1<Parameters_ConversionToDCS_e19111401>;
 template class ConversionToDCS1<Parameters_ConversionToDCS_e19111402>;
+template class ConversionToDCS1<Parameters_ConversionToDCS_e19111403>;
 
 template class TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::He_1000eV>;
 template class TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::C_1000eV>;

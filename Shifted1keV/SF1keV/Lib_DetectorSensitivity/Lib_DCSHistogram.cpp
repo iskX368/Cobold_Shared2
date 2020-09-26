@@ -1680,6 +1680,8 @@ template class DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>;
 
 
 template class DCSHistogram<Conv_1000_1000>;
+template class DCSHistogram<Conv_1000_1001p55>;
+template class DCSHistogram<Conv_1000_1003p10>;
 
 
 //template class  DetectorSensitivityDistribution1D<Conv_1000_1000, Elastic32_He_1000eV, SourceEvents_Elastic_He_1000eV>;
