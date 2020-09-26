@@ -398,6 +398,9 @@ public:
 
 
 
+//スキマーによる像の削れ方からPhi_Offsetはほぼゼロ
+//校正プレート像の回転はILの漏れ磁場による
+
 
 //散乱角度への変換に使用する二次多項式の係数
 //データは e19111401
@@ -417,6 +420,18 @@ struct Parameters_ConversionToDCS_e19111402 {
 	static constexpr double K0 = 0;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の定数項
 	static constexpr double K1 = 0.67572;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の第一係数
 	static constexpr double K2 = 0.04862;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の第二係数
+
+	static constexpr double Phi_Offset = 0;//検出器中心に関する方位角 phi からこれを引くと散乱方位角 varphi が求められる
+	static constexpr LibFlag::AzimuthFormat Format_Phi_Offset = LibFlag::AzimuthFormat::Deg;
+};
+
+
+//e19111402
+//出射エネルギー 1000 + 3.10 eV
+struct Parameters_ConversionToDCS_e19111403 {
+	static constexpr double K0 = 0;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の定数項
+	static constexpr double K1 = 0.5073231279348395;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の第一係数
+	static constexpr double K2 = 0.05529602236903003;//散乱極角 Theta_deg から検出位置中心からの距離 R_mm への変換二次多項式 R_mm = F(theta_deg) の第二係数
 
 	static constexpr double Phi_Offset = 0;//検出器中心に関する方位角 phi からこれを引くと散乱方位角 varphi が求められる
 	static constexpr LibFlag::AzimuthFormat Format_Phi_Offset = LibFlag::AzimuthFormat::Deg;
