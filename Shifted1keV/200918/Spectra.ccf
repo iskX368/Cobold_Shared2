@@ -26,7 +26,7 @@
 ;execute spectra\Spectra_XYTR_mclean.ccf
 
 ;検出位置，時刻，半径
-execute spectra\Spectra_XYTR_mcleanT.ccf
+;execute spectra\Spectra_XYTR_mcleanT.ccf
 
 
 

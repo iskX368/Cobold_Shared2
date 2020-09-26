@@ -1835,6 +1835,10 @@ namespace LAES2 {
 	//Parameter1121 : IR無しのときの遅延発生器DG645の値[ns]
 	double dTOF_Offset_WithoutIR;
 
+	//Parameter1125 : 外部へエネルギーシフト信号を書き出したかったら1，そうでないならそれ以外
+	__int32 i32Output_HistogramsEvents_LAES;
+
+
 
 
 	//C++プログラムでConditionを使う
@@ -2192,8 +2196,12 @@ namespace LAES2 {
 
 
 
-	//ヒストグラムをまとめて作る
-	template<class class_DCSHistogram_Ei_Ef, class class_DetectorSensitivity_Ei>
+	/// <summary>
+	/// ヒストグラムをまとめて作る
+	/// </summary>
+	/// <typeparam name="class_DCSHistogram_Ei_Ef"> : 入射エネルギー Ei, 出射エネルギー Ef に対応する変換を用いたヒストグラム</typeparam>
+	/// <typeparam name="class_DetectorSensitivity_Ei"> : 検出器衝突時エネルギー Ef のときの検出器感度</typeparam>
+	template<class class_DCSHistogram_Ei_Ef, class class_DetectorSensitivity_Ef>
 	class HistoProc1 {
 	public:
 		HistoProc1()
@@ -2222,7 +2230,7 @@ namespace LAES2 {
 
 				up2CI = make_ScaledHistogram1D(pinf_CI);
 
-				up2DetectorSensitivity = class_DetectorSensitivity_Ei::make(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
+				up2DetectorSensitivity = class_DetectorSensitivity_Ef::make(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
 
 				up2Theta_deg = class_DCSHistogram_Ei_Ef::make_1D_vs_Theta_deg(numIntervals, dBinR);
 				up2Theta_deg_VarPhi = class_DCSHistogram_Ei_Ef::make_2D_vs_Theta_deg_VarPhi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
@@ -2302,7 +2310,7 @@ namespace LAES2 {
 		}
 
 		//全部積算終わったらファイルへ書き出す
-		void WriteToIgorTextFile(CStdioFile& file_output, const bool Put_IGOR_First, const std::basic_string<TCHAR>& Wave_Comment, const std::basic_string<TCHAR>& WaveName_Suffix,const bool bOutputTheoreticalDCSCurves) {
+		void WriteToIgorTextFile(CStdioFile& file_output, const bool Put_IGOR_First, const std::basic_string<TCHAR>& Wave_Comment, const std::basic_string<TCHAR>& WaveName_Preffix, const std::basic_string<TCHAR>& WaveName_Suffix,const bool bOutputTheoreticalDCSCurves) {
 			try {
 				if (m_isOK) {
 
@@ -2338,9 +2346,8 @@ namespace LAES2 {
 
 
 					//ウェーブ名の先頭と末尾に文字列つける
-					auto SetName = [&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
-						const auto Src = CurrentDAqInfo::SourceLMFileName();//ソースlmf名称を先頭に
-						return Src + Name + WaveName_Suffix;
+					auto SetName = [&WaveName_Preffix,&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
+						return WaveName_Preffix + Name + WaveName_Suffix;
 					};
 
 
@@ -2376,8 +2383,8 @@ namespace LAES2 {
 							{ToBoundaries(sinfoR),SetName(_T("i_R")),_T("For 2D images")},//横軸境界 R
 							{ToBoundaries(sinfoTheta_deg),SetName(_T("i_Th")),_T("For 2D images")},//横軸境界 Theta_deg
 
-							{ToBoundaries(sinfoPhi),SetName(_T("i_Ph")),_T("For 2D images")},//横軸境界 Phi_deg
-							{ToBoundaries(sinfoVarPhi),SetName(_T("i_VPh")),_T("For 2D images")},//横軸境界 VarPhi_deg
+							{ToBoundaries(sinfoPhi),SetName(_T("i_Ph")),_T("For 2D images")},//横軸境界 Phi
+							{ToBoundaries(sinfoVarPhi),SetName(_T("i_VPh")),_T("For 2D images")},//横軸境界 VarPhi
 						}
 					);
 					file_output.WriteString(tstr.c_str());
@@ -2385,15 +2392,13 @@ namespace LAES2 {
 
 					StringsForIgorTextWave::WaveText2(tstr,
 						{
-							{up2RawR_Phi->Get(), SetName(_T("h_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
-							{up2RawR_Phi->GetE(), SetName(_T("hE_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
+							{up2RawR_Phi->Get(), SetName(_T("h_R_Ph")), Wave_Comment},//vs R, Phi, 感度補正なし
+							{up2RawR_Phi->GetE(), SetName(_T("hE_R_Ph")), Wave_Comment},//vs R, Phi, 感度補正なし
 
 							{up2RawTheta_deg_VarPhi->Get(),SetName(_T("h_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
 							{up2RawTheta_deg_VarPhi->GetE(),SetName(_T("hE_Th_VPh")),Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
 
-							{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
-							{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
-
+							
 							{up2DetectorSensitivity->DetectorSensitivityDistribution(),_T("Ratio_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度
 							{up2DetectorSensitivity->DetectorSensitivityDistributionE(),_T("RatioE_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度の誤差
 
@@ -2469,15 +2474,17 @@ namespace LAES2 {
 
 
 						StringsForIgorTextWave::WaveText1(tstr,
-							{ std::move(*DCS_Theory_vs_R),_T("DCS_R"),_T("Elastic32, 1000 eV") },//vs R, DCS理論曲線
-							{ std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Th"),_T("Elastic32, 1000 eV") },//vs Theta_deg, DCS理論曲線
+							{
+								{ std::move(*DCS_Theory_vs_R),_T("DCS_R"),_T("Elastic32, 1000 eV") },//vs R, DCS理論曲線
+								{ std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Th"),_T("Elastic32, 1000 eV") },//vs Theta_deg, DCS理論曲線
+							}
 							);
 						file_output.WriteString(tstr.c_str());
 
 						StringsForIgorTextWave::WaveText2(tstr,
 							{
-								{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
-								{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
+								{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, Phi, DCS理論曲面
+								{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi, DCS理論曲面
 							}
 						);
 						file_output.WriteString(tstr.c_str());
@@ -2503,7 +2510,7 @@ namespace LAES2 {
 		std::unique_ptr<ScaledHistogram1D> up2CI;
 
 		//1000 eVでの感度
-		std::unique_ptr<DetectorSensitivity1_1000_1000> up2DetectorSensitivity;
+		std::unique_ptr<class_DetectorSensitivity_Ef> up2DetectorSensitivity;
 
 		//感度補正有り
 		std::unique_ptr<ScaledHistogram1D> up2Theta_deg;
@@ -2735,8 +2742,247 @@ namespace LAES2 {
 
 
 
+	//LAESのlmfからファイルをまとめて出力
+	//CCFでのCnodition設定に関係なくエネルギーシフト信号をファイルへ書き出す
+	class HistEventProc_LAES {
+	public:
+		HistEventProc_LAES()
+			:
+			m_F_Histo_ITX(),
+			m_F_Event_wp2(),
+			m_F_Event_op2(),
+			m_F_Event_wp1(),
+			m_F_Event_op1(),
+			m_HistoP_wp2(nullptr),
+			m_HistoP_op2(nullptr),
+			m_HistoP_wp1(nullptr),
+			m_HistoP_op1(nullptr),
+			m_EventP_wp2(nullptr),
+			m_EventP_op2(nullptr),
+			m_EventP_wp1(nullptr),
+			m_EventP_op1(nullptr),
+			m_str_wp2(),
+			m_str_op2(),
+			m_str_wp1(),
+			m_str_op1(),
+			m_isOK(false)
+		{
+			try {
+				//Condition文字列を取得
+				LibFlag::Condition_ToString(m_str_wp2, static_cast<LibFlag::type_Flag>(m_wp2));
+				LibFlag::Condition_ToString(m_str_op2, static_cast<LibFlag::type_Flag>(m_op2));
+				LibFlag::Condition_ToString(m_str_wp1, static_cast<LibFlag::type_Flag>(m_wp1));
+				LibFlag::Condition_ToString(m_str_op1, static_cast<LibFlag::type_Flag>(m_op1));
+
+				//ファイル書き込みプロシージャを作成
+				m_HistoP_wp2 = std::make_unique<HistoProc1<DCSHistogram_1000_1003p10, DetectorSensitivity1_1000_1000>>();
+				m_HistoP_op2 = std::make_unique<HistoProc1<DCSHistogram_1000_1003p10, DetectorSensitivity1_1000_1000>>();
+				m_HistoP_wp1 = std::make_unique<HistoProc1<DCSHistogram_1000_1001p55, DetectorSensitivity1_1000_1000>>();
+				m_HistoP_op1 = std::make_unique<HistoProc1<DCSHistogram_1000_1001p55, DetectorSensitivity1_1000_1000>>();
+
+				m_EventP_wp2 = std::make_unique<EventProc>(m_WriteCoordinate, m_sep, m_str_wp2);
+				m_EventP_op2 = std::make_unique<EventProc>(m_WriteCoordinate, m_sep, m_str_op2);
+				m_EventP_wp1 = std::make_unique<EventProc>(m_WriteCoordinate, m_sep, m_str_wp1);
+				m_EventP_op1 = std::make_unique<EventProc>(m_WriteCoordinate, m_sep, m_str_op1);
+
+				//ファイルを開く
+				if (!m_F_Event_wp2.Open(m_FileName_Event_TXT_wp2.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+					m_F_Event_wp2.Abort();
+					throw std::exception("HistEventProc_LAES::HistEventProc_LAES : file for event cannot be opened.");
+				}
+				else {
+					//Event冒頭
+					m_EventP_wp2->WriteHeaderString(m_F_Event_wp2);
+				}
+
+				//ファイルを開く
+				if (!m_F_Event_op2.Open(m_FileName_Event_TXT_op2.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+					m_F_Event_op2.Abort();
+					throw std::exception("HistEventProc_LAES::HistEventProc_LAES : file for event cannot be opened.");
+				}
+				else {
+					//Event冒頭
+					m_EventP_op2->WriteHeaderString(m_F_Event_op2);
+				}
+
+				//ファイルを開く
+				if (!m_F_Event_wp1.Open(m_FileName_Event_TXT_wp1.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+					m_F_Event_wp1.Abort();
+					throw std::exception("HistEventProc_LAES::HistEventProc_LAES : file for event cannot be opened.");
+				}
+				else {
+					//Event冒頭
+					m_EventP_wp1->WriteHeaderString(m_F_Event_wp1);
+				}
+
+				//ファイルを開く
+				if (!m_F_Event_op1.Open(m_FileName_Event_TXT_op1.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+					m_F_Event_op1.Abort();
+					throw std::exception("HistEventProc_LAES::HistEventProc_LAES : file for event cannot be opened.");
+				}
+				else {
+					//Event冒頭
+					m_EventP_op1->WriteHeaderString(m_F_Event_op1);
+				}
+
+				m_isOK = true;
+
+				//ファイル開いたままイベント書き込みへ
+
+			}
+			catch (std::exception& ex) {
+				AfxMessageBox(ex.what());
+				m_isOK = false;
+			}
+		}
+		~HistEventProc_LAES() = default;
+
+		
 
 
+		void AppendEvent() {
+			try {
+				if (m_isOK) {
+
+					//Cnodition満たしていたら
+					if (up2CCFileCondition->IsTrue(m_wp2)) {
+						//ヒストグラムに加算
+						m_HistoP_wp2->AddToHist();
+						//イベントを書き込む
+						m_EventP_wp2->WriteCoordinateValueString(m_F_Event_wp2);
+					}
+
+					//Cnodition満たしていたら
+					if (up2CCFileCondition->IsTrue(m_op2)) {
+						//ヒストグラムに加算
+						m_HistoP_op2->AddToHist();
+						//イベントを書き込む
+						m_EventP_op2->WriteCoordinateValueString(m_F_Event_op2);
+					}
+
+					//Cnodition満たしていたら
+					if (up2CCFileCondition->IsTrue(m_wp1)) {
+						//ヒストグラムに加算
+						m_HistoP_wp1->AddToHist();
+						//イベントを書き込む
+						m_EventP_wp1->WriteCoordinateValueString(m_F_Event_wp1);
+					}
+
+					//Cnodition満たしていたら
+					if (up2CCFileCondition->IsTrue(m_op1)) {
+						//ヒストグラムに加算
+						m_HistoP_op1->AddToHist();
+						//イベントを書き込む
+						m_EventP_op1->WriteCoordinateValueString(m_F_Event_op1);
+					}
+
+				}
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+
+
+
+		void Finalize() {
+			try {
+				if (m_isOK) {
+
+					//イベントファイルを閉じる
+					m_F_Event_wp2.Close();
+					m_F_Event_op2.Close();
+					m_F_Event_wp1.Close();
+					m_F_Event_op1.Close();
+
+					//ヒストグラムをまとめてitxへ書き込む
+					//非線形ヒストグラム用出力ファイルを開く
+					if (!m_F_Histo_ITX.Open(m_FileName_Histo_ITX.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+						m_F_Histo_ITX.Abort();
+						throw std::exception("HistEventProc::Finalize : file for histograms cannot be opened.");
+					}
+					else {
+						//ウェーブ名冒頭はソースlmf名称
+						std::basic_string<TCHAR> preff = CurrentDAqInfo::SourceLMFileName();
+						
+						m_HistoP_wp2->WriteToIgorTextFile(m_F_Histo_ITX, true, m_str_wp2, preff, m_str_wp2, false);
+						m_HistoP_op2->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op2, preff, m_str_op2, false);
+						m_HistoP_wp1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_wp1, preff, m_str_wp1, false);
+						m_HistoP_op1->WriteToIgorTextFile(m_F_Histo_ITX, false, m_str_op1, preff, m_str_op1, false);
+
+						m_F_Histo_ITX.Close();
+					}
+
+				}
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+
+
+		bool isOK()const noexcept {
+			return m_isOK;
+		}
+
+
+		//ファイル
+		CStdioFile m_F_Histo_ITX;
+		CStdioFile m_F_Event_wp2;
+		CStdioFile m_F_Event_op2;
+		CStdioFile m_F_Event_wp1;
+		CStdioFile m_F_Event_op1;
+
+		//ヒストグラムに書き出す作業まとめ
+		std::unique_ptr<HistoProc1<DCSHistogram_1000_1003p10, DetectorSensitivity1_1000_1000>> m_HistoP_wp2;
+		std::unique_ptr<HistoProc1<DCSHistogram_1000_1003p10, DetectorSensitivity1_1000_1000>> m_HistoP_op2;
+		std::unique_ptr<HistoProc1<DCSHistogram_1000_1001p55, DetectorSensitivity1_1000_1000>> m_HistoP_wp1;
+		std::unique_ptr<HistoProc1<DCSHistogram_1000_1001p55, DetectorSensitivity1_1000_1000>> m_HistoP_op1;
+
+		//イベントを書き出す作業まとめ
+		std::unique_ptr<EventProc> m_EventP_wp2;
+		std::unique_ptr<EventProc> m_EventP_op2;
+		std::unique_ptr<EventProc> m_EventP_wp1;
+		std::unique_ptr<EventProc> m_EventP_op1;
+		
+		//COndition文字列
+		std::basic_string<TCHAR> m_str_wp2;
+		std::basic_string<TCHAR> m_str_op2;
+		std::basic_string<TCHAR> m_str_wp1;
+		std::basic_string<TCHAR> m_str_op1;
+		
+	private:
+		//書き出したいCoordinteは共通
+		const __int32 m_WriteCoordinate = 47;
+		
+		//書き出すときのセパレータ
+		const TCHAR m_sep = _T(',');
+
+		//採用するCondition
+		//w : WithIR, o : WithoutIR
+		//p2 : n=+2, p1 : n=+1
+		const LibFlag::Condition m_wp2 = LibFlag::Condition::mcleanT_WithIR_KESp2R;
+		const LibFlag::Condition m_op2 = LibFlag::Condition::mcleanT_WithoutIR_KESp2R;
+
+		const LibFlag::Condition m_wp1 = LibFlag::Condition::mcleanT_WithIR_KESp1R;
+		const LibFlag::Condition m_op1 = LibFlag::Condition::mcleanT_WithoutIR_KESp1R;
+
+		//出力先
+		const std::basic_string<TCHAR> m_FileName_Histo_ITX = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\DCSHisto_LAES.itx");
+		
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithIR_KESp2R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_op2 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithoutIR_KESp2R.txt");
+
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_wp1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithIR_KESp1R.txt");
+		const std::basic_string<TCHAR> m_FileName_Event_TXT_op1 = _T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\Events_LAES_mcleanT_WithoutIR_KESp1R.txt");
+
+	private:
+		bool m_isOK;
+	};
+
+	std::unique_ptr<HistEventProc_LAES> HEP_LAES;
 
 
 
@@ -2792,6 +3038,9 @@ namespace LAES2 {
 
 		dBinPosX = Parameter[1118];
 		dBinPosY = Parameter[1119];
+
+		i32Output_HistogramsEvents_LAES = RoundToNearestInt32(Parameter[1125]);
+
 
 
 
@@ -2877,6 +3126,16 @@ namespace LAES2 {
 		HEP2 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath2), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath2), i32WriteCoordinatesToFile2, _T(','), i32WriteCoordinatesToFile_Condition2);
 		HEP3 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath3), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath3), i32WriteCoordinatesToFile3, _T(','), i32WriteCoordinatesToFile_Condition3);
 		HEP4 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath4), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath4), i32WriteCoordinatesToFile4, _T(','), i32WriteCoordinatesToFile_Condition4);
+
+
+		//LAES用
+		if (i32Output_HistogramsEvents_LAES == 1) {
+			HEP_LAES = std::make_unique<HistEventProc_LAES>();
+		}
+		else {
+			HEP_LAES.reset();
+		}
+
 
 
 		//確認
@@ -3401,6 +3660,13 @@ namespace LAES2 {
 				HEP2->AppendEvent();
 				HEP3->AppendEvent();
 				HEP4->AppendEvent();
+
+
+				if (HEP_LAES) {
+					HEP_LAES->AppendEvent();
+				}
+
+
 			}
 			catch (std::exception&) {
 				//
@@ -3556,6 +3822,9 @@ namespace LAES2 {
 			HEP3->Finalize();
 			HEP4->Finalize();
 
+			if (HEP_LAES) {
+				HEP_LAES->Finalize();
+			}
 
 		}
 		catch (std::out_of_range& ex) {
