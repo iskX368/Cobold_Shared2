@@ -373,8 +373,12 @@ condition TOF,5000,6000,WithIR;				’x‰„”­¶Ší‚Ìİ’è‚É‚æ‚Á‚ÄIR—L‚è‚Ì‚Æ‚«‚Í‚±‚Ì”Íˆ
 condition TOF,2000,3000,WithoutIR;			’x‰„”­¶Ší‚Ìİ’è‚É‚æ‚Á‚ÄIR–³‚µ‚Ì‚Æ‚«‚Í‚±‚Ì”ÍˆÍ‚É‘®‚·‚é
 
 
-condition TOF_NoOffset,-370,-270,elastic;			’e«U— Ei=1000 eV, Ef=1000 eV
-
+condition TOF_NoOffset,-370,-270,eelastic;			’e«U— Ei=1000 eV, Ef=1000 eV
+condition PosX,-3.65,-3.25,PxGate
+condition PosY,-2.05,-1.7,PyGate
+condition PxGate,and,PyGate,pxpy
+;condition not,pxpy,npxpy
+condition eelastic,and,pxpy,elastic
 
 condition KineticEnergy,1002.6,1003.6,KESp2;			ƒGƒlƒ‹ƒM[ƒVƒtƒg Ei=1000 eV, Ef=1003.10 eV
 condition KineticEnergy,1001.05,1002.05,KESp1;			ƒGƒlƒ‹ƒM[ƒVƒtƒg Ei=1000 eV, Ef=1001.55 eV

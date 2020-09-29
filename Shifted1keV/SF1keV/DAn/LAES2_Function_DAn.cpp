@@ -2533,8 +2533,8 @@ namespace LAES2 {
 
 		//ヒストグラムとイベントの書き込み用ファイルを作成する
 		HEP = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath), i32WriteCoordinatesToFile, _T(','), i32WriteCoordinatesToFile_Condition);
-		HEP1 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath1), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath1), i32WriteCoordinatesToFile1, _T(','), i32WriteCoordinatesToFile_Condition1);
-		HEP2 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath2), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath2), i32WriteCoordinatesToFile2, _T(','), i32WriteCoordinatesToFile_Condition2);
+		HEP1 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath1), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath1), i32WriteCoordinatesToFile1, _T(','), 25);//with
+		HEP2 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath2), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath2), i32WriteCoordinatesToFile2, _T(','), 30);//without
 		HEP3 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath3), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath3), i32WriteCoordinatesToFile3, _T(','), i32WriteCoordinatesToFile_Condition3);
 		HEP4 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath4), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath4), i32WriteCoordinatesToFile4, _T(','), i32WriteCoordinatesToFile_Condition4);
 
@@ -3023,8 +3023,8 @@ namespace LAES2 {
 			//@散乱後の極角と方位角
 			double Theta_deg = 0;
 			double VarPhi_deg = 0;
-			Theta_deg = Conv_1000_1000::Theta_deg(r);
-			VarPhi_deg = Conv_1000_1000::VarPhi(phi, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion), static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
+			Theta_deg = Conv_1000_1001p55::Theta_deg(r);//el
+			VarPhi_deg = Conv_1000_1001p55::VarPhi(phi, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion), static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));//el
 			Crd::Theta_deg = Theta_deg;
 			Crd::VarPhi_deg = VarPhi_deg;
 

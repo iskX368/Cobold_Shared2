@@ -419,7 +419,7 @@ struct Parameters_ConversionToDCS_e19111401 {
 struct Parameters_ConversionToDCS_e19111402 {
 	static constexpr double K0 = 0;//U—‹ÉŠp Theta_deg ‚©‚çŒŸoˆÊ’u’†S‚©‚ç‚Ì‹——£ R_mm ‚Ö‚Ì•ÏŠ·“ñŸ‘½€® R_mm = F(theta_deg) ‚Ì’è”€
 	static constexpr double K1 = 0.67572;//U—‹ÉŠp Theta_deg ‚©‚çŒŸoˆÊ’u’†S‚©‚ç‚Ì‹——£ R_mm ‚Ö‚Ì•ÏŠ·“ñŸ‘½€® R_mm = F(theta_deg) ‚Ì‘æˆêŒW”
-	static constexpr double K2 = 0.04862;//U—‹ÉŠp Theta_deg ‚©‚çŒŸoˆÊ’u’†S‚©‚ç‚Ì‹——£ R_mm ‚Ö‚Ì•ÏŠ·“ñŸ‘½€® R_mm = F(theta_deg) ‚Ì‘æ“ñŒW”
+	static constexpr double K2 = 0.04682;//U—‹ÉŠp Theta_deg ‚©‚çŒŸoˆÊ’u’†S‚©‚ç‚Ì‹——£ R_mm ‚Ö‚Ì•ÏŠ·“ñŸ‘½€® R_mm = F(theta_deg) ‚Ì‘æ“ñŒW”
 
 	static constexpr double Phi_Offset = 0;//ŒŸoŠí’†S‚ÉŠÖ‚·‚é•ûˆÊŠp phi ‚©‚ç‚±‚ê‚ğˆø‚­‚ÆU—•ûˆÊŠp varphi ‚ª‹‚ß‚ç‚ê‚é
 	static constexpr LibFlag::AzimuthFormat Format_Phi_Offset = LibFlag::AzimuthFormat::Deg;

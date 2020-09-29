@@ -1633,6 +1633,10 @@ std::unique_ptr<DetectorSensitivityDistribution1<class_ConversionToDCS, class_Th
 
 		}
 
+		//もれ
+		Ratio_vs_R_Phi->at(2).at(12) = 0.25 * (Ratio_vs_R_Phi->at(1).at(12) + Ratio_vs_R_Phi->at(3).at(12) + Ratio_vs_R_Phi->at(2).at(11) + Ratio_vs_R_Phi->at(2).at(13));
+		Ratio_vs_R_Phi_Error->at(2).at(12) = 0.25 * (Ratio_vs_R_Phi_Error->at(1).at(12) + Ratio_vs_R_Phi_Error->at(3).at(12) + Ratio_vs_R_Phi_Error->at(2).at(11) + Ratio_vs_R_Phi_Error->at(2).at(13));
+
 
 		//作成
 		return std::make_unique<DetectorSensitivityDistribution1_impl<class_ConversionToDCS, class_TheoreticalAtomicDCS_Elastic32, class_SourceEvents>>(Format_Phi,
