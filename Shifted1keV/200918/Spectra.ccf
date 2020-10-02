@@ -14,7 +14,7 @@
 ;execute spectra\TDC8PCI2_HEX_Spectra_PosXPosY.ccf
 
 ;トラブルシューティング
-;execute Spectra\TDC8PCI2_HEX_Spectra_TroubleShooting.ccf
+execute Spectra\TDC8PCI2_HEX_Spectra_TroubleShooting.ccf
 
 ;検出位置，時刻，半径
 ;execute spectra\Spectra_XYTR_always.ccf
@@ -45,7 +45,7 @@ define1 990,1010,0.2,KineticEnergy,KineticEnergy[eV],none,mcTr_WithoutIR,KEmcTr_
 ;execute spectra\Spectra_XYTR_mcleanT_KESp2R.ccf
 
 ;検出位置，時刻，半径, n = +1
-;execute spectra\Spectra_XYTR_mcleanT_KESp1R.ccf
+execute spectra\Spectra_XYTR_mcleanT_KESp1R.ccf
 
 ;検出位置，時刻，半径, n = +-0
 ;execute spectra\Spectra_XYTR_mcleanT_KES0R.ccf
