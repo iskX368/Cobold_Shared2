@@ -3325,6 +3325,8 @@ namespace LAES2 {
 
 		}
 
+		up2hp1.reset();
+
 		return 0;
 
 	}
