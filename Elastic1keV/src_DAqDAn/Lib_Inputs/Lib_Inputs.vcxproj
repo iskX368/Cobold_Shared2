@@ -301,6 +301,9 @@
   <ItemGroup>
     <ClInclude Include="..\include\Lib_Inputs.h" />
     <ClInclude Include="..\include\SourceEvents_DetectorSensitivity.h" />
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K0.h" />
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K1.h" />
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K2.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

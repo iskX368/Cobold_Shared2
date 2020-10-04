@@ -124,7 +124,7 @@ bool operator!=(const PointInformation& t1, const PointInformation& t2) noexcept
 struct ScaleInformation {
 	virtual ~ScaleInformation();
 
-	
+
 	/// <summary>
 	/// I 区間集合クラスへのポインタを取得する
 	/// </summary>
@@ -387,7 +387,11 @@ public:
 	/// <exception cref="std::out_of_range"></exception>
 	/// <exception cref="std::exception"></exception>
 	/// <returns></returns>
-	virtual void AddValue(const double Xvalue, const double Weight = 1.0) = 0;
+	//virtual void AddValue(const double Xvalue, const double Weight = 1.0) = 0;
+
+
+
+	virtual void AddValue(const double Xvalue, const double Weight, const double AbsoluteErrorOfWeight) = 0;
 
 
 	/// <summary>
@@ -429,7 +433,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual const std::vector<double>& GetWidth()const noexcept = 0;
-	
+
 	/// <summary>
 	/// 一次元ヒストグラムの横軸スケールによる修正前の値を取得する　確認用
 	/// </summary>
@@ -459,7 +463,7 @@ public:
 	/// <exception cref="std::out_of_range"></exception>
 	/// <returns></returns>
 	virtual double GetEAt(const double Xvalue)const = 0;
-	
+
 	/// <summary>
 	/// 一次元ヒストグラムの絶対誤差を取得する
 	/// </summary>
@@ -524,7 +528,11 @@ public:
 	/// <exception cref="std::out_of_range"></exception>
 	/// <exception cref="std::exception"></exception>
 	/// <returns></returns>
-	virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight = 1.0) = 0;
+	//virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight = 1.0) = 0;
+
+
+	virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight, const double AbsoluteErrorOfWeight) = 0;
+
 
 	/// <summary>
 	/// 二次元ヒストグラムの数値をすべてゼロにする
@@ -538,9 +546,7 @@ public:
 	/// </summary>
 	/// <exception cref="std::out_of_range"></exception>
 	/// <returns></returns>
-	virtual const std::vector<std::vector<double>>& Get() = 0;
-
-	virtual std::vector<std::vector<double>> Get_()const = 0;
+	virtual std::vector<std::vector<double>> Get()const = 0;
 
 
 	/// <summary>
@@ -653,7 +659,7 @@ public:
 	/// <returns></returns>
 	static std::unique_ptr<ScaledHistogram2D> make(const std::shared_ptr<PointInformation>& sppointInformation0, const std::shared_ptr<PointInformation>& sppointInformation1, std::function<double(const double)> f_Pnt2HorizontalScale0, std::function<double(const double)> f_Pnt2HorizontalScale1);
 
-	
+
 };
 
 

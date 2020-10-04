@@ -5,7 +5,6 @@
 #include "framework.h"
 
 #include "Lib_CurrentDAqInfo.h"
-#include "Lib_Inputs.h"
 
 #include <fstream>
 
@@ -15,11 +14,8 @@ using tstring = std::basic_string<type_char>;
 using tifstream = std::basic_ifstream<type_char>;
 using tofstream = std::basic_ofstream<type_char>;
 
-//char
-//static constexpr type_char TempFilePathA[] = "C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared1\\temp\\DAqInfo.dat";
-//static constexpr type_char Flag_OnlineA = '1';
-//static constexpr type_char Flag_Not_OnlineA = '0';
-static const tstring g_SourceLMFilePath_InCase_HardwaveA = "HARDWARE";
+
+static const tstring g_SourceLMFilePath_InCase_HardwaveA = LibPrm::SourceLMFilePath_InCase_Hardwave;
 
 //Globals
 static bool g_isLoaded = false;
@@ -31,7 +27,7 @@ static tstring g_SourceLMFilePathA;
 //グローバル変数をロードする
 void LoadInfoA() {
 	try {
-		
+
 		tifstream ifs(LibPrm::DAqInfo_FilePath);
 		if (!ifs) {
 			throw std::exception("TempFile not found");
@@ -96,13 +92,41 @@ const tstring& CurrentDAqInfoA::SourceLMFilePath() {
 }
 
 
+//データ取り込みのときのソースLMFの名前を返す
+tstring CurrentDAqInfoA::SourceLMFileName() {
+	try {
+		auto path = SourceLMFilePath();
+
+		//拡張子
+		const auto pos1 = path.find_last_of('.');
+		if (pos1 == tstring::npos) {
+			throw std::exception("CurrentDAqInfoA::SourceLMFileName : extension ?");
+		}
+
+		//セパレータ
+		const auto pos0 = path.find_last_of('\\');
+		if (pos0 == tstring::npos) {
+			throw std::exception("CurrentDAqInfoA::SourceLMFileName : Path separator ?");
+		}
+
+		//コピーする
+		return tstring(path.begin() + pos0 + 1, path.begin() + pos1);
+
+	}
+	catch (std::exception&) {
+		throw;
+	}
+}
+
+
+
 bool CurrentDAqInfoA::IsOnline() {
 	try {
 		if (!g_isLoaded) {
 			LoadInfoA();
 			g_isLoaded = true;
 		}
-		
+
 		return g_IsOnline;
 	}
 	catch (std::exception&) {
@@ -113,7 +137,7 @@ bool CurrentDAqInfoA::IsOnline() {
 
 //DAqプログラムから保存したい内容を引数に渡してテキストファイルへ保存する
 __int32 CurrentDAqInfoA::Save(const tstring& LMFilePath, bool isOnline) {
-	
+
 	tofstream ofs(LibPrm::DAqInfo_FilePath);
 	if (!ofs) {
 		return 1;

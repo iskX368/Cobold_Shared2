@@ -313,6 +313,9 @@
     <ProjectReference Include="..\Lib_ConversionToDCS\Lib_ConversionToDCS.vcxproj">
       <Project>{7ce13ff1-aff3-453a-91f3-ef1318133c22}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Lib_Inputs\Lib_Inputs.vcxproj">
+      <Project>{4fc03a5c-ae25-48b9-a3cd-fa878b4ce0a4}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Lib_ScaleInformation\Lib_ScaleInformation.vcxproj">
       <Project>{76934009-9820-428c-94ca-df9131ecc681}</Project>
     </ProjectReference>

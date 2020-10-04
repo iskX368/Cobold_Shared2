@@ -27,6 +27,15 @@
     <ClInclude Include="..\include\SourceEvents_DetectorSensitivity.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K0.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K1.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CoefDist_TOFNoOffset2KES_K2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

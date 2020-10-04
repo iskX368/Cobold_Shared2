@@ -343,7 +343,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lib_CppAddress_CCFileCoordinate\Lib_CppAddress_CCFileCoordinate.vcxproj">
+    <ProjectReference Include="..\Lib_CppAddCCFCrd\Lib_CppAddCCFCrd.vcxproj">
       <Project>{6ade8234-6174-4e96-96ea-d8ccf574c502}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Lib_Inputs\Lib_Inputs.vcxproj">

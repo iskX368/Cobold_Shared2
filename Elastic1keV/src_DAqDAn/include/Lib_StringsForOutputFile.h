@@ -6,7 +6,7 @@
 
 
 #include "Lib_Inputs.h"
-#include "Lib_CppAddress_CCFileCoordinate.h"
+#include "Lib_CppAddCCFCrd.h"
 #include "Lib_ScaleInformation.h"
 #include "Lib_CurrentDAqInfo.h"
 
