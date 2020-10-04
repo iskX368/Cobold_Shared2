@@ -105,7 +105,7 @@ Parameter 1100,1		;PosX,PosYに採用する値
 
 
 ;***********************************
-;p1101	1以上でビットフラグによって選択したCoordinate値を外部ファイルへ出力する．ゼロ以下ならファイル出力しない．Lib_StringsForOutputFile.hを参照
+;p1101	1以上でビットフラグによって選択したCoordinate値を外部ファイルへ出力する．ゼロ以下ならファイル出力しない．Lib_Inputs.hを参照
 ;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
 ;Posx		0
 ;PosY		1
@@ -122,7 +122,7 @@ Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
 
 
 ;***********************************
-;p1102	Conditionを数値でただ一つ選択する．Lib_CCFileCondition.hを参照
+;p1102	Conditionを数値でただ一つ選択する．Lib_Inputs.hを参照
 ;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
 ;always			0
 ;clean			1
@@ -136,7 +136,7 @@ Parameter 1102,4		;書き込むときのCondition
 
 
 ;***********************************
-;p1111	解析対象の試料を選択する．DCS理論値をプロットするために指定する．DCSHistogram.hのenumclassを参照
+;p1111	解析対象の試料を選択する．DCS理論値をプロットするために指定する．Lib_Inputs.hのenumclassを参照
 ;新しく追加，削除するときはLib_ConversionToDCSプロジェクトに理論計算結果を追加する
 ;次に上記ヘッダファイルのenumclassを変更して，Flag_Condition_Maxも変更する
 ;
@@ -148,7 +148,7 @@ Parameter 1102,4		;書き込むときのCondition
 ;Ar	5
 ;Xe	6
 ;
-Parameter 1111,3		;解析対象の試料
+Parameter 1111,0		;解析対象の試料
 
 
 
