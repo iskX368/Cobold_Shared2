@@ -21,9 +21,8 @@ class StringsForOutputFileA {
 public:
 	using type_char = char;
 	using tstring = std::basic_string<type_char>;
-	using CPPA_CCFC = CppAddress_CCFileCoordinateA;
 	using CDI = CurrentDAqInfoA;
-
+	using CPPA_CCFC = CppAddress_CCFileCoordinateA;
 
 	virtual ~StringsForOutputFileA() = default;
 
@@ -164,7 +163,20 @@ public:
 	/// <exception cref="std::invalid_argument"></exception>
 	/// <exception cref="std::out_of_range"></exception>
 	/// <exception cref="std::exception"></exception>
-	static void WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo);
+	//static void WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo);
+
+
+	/// <summary>
+	/// 複数の一次元 vector から Igor テキストファイル用の文字列を取得する
+	/// </summary>
+	/// <param name="Dst"> : 書き込み先</param>
+	/// <param name="list_Value1D_ValueWaveName_Comment"> : ウェーブ用データ { 一次元数値, ウェーブ名称, コメント } のリスト</param>
+	static void WaveText1(tstring& Dst, std::initializer_list<std::tuple<std::vector<double>, tstring, tstring>> list_Value1D_ValueWaveName_Comment)noexcept;
+
+
+
+
+	static void WaveText2(tstring& Dst, std::initializer_list<std::tuple<std::vector<std::vector<double>>, tstring, tstring>> list_Value2D_ValueWaveName_Comment)noexcept;
 
 
 	/// <summary>
@@ -180,7 +192,7 @@ public:
 	/// <exception cref="std::invalid_argument"></exception>
 	/// <exception cref="std::out_of_range"></exception>
 	/// <exception cref="std::exception"></exception>
-	static void WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1);
+	//static void WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1);
 
 };
 
@@ -191,10 +203,10 @@ public:
 
 
 	//未実装　std::exception
-	static __int32 WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo);
+	//static __int32 WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo);
 
 	//未実装　std::exception
-	static __int32 WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1);
+	//static __int32 WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1);
 
 
 };

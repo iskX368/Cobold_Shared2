@@ -28,6 +28,24 @@ public:
     /// <returns>Conditionが成立しているならtrue, そうでないならfalse</returns>
     virtual bool IsTrue(const tstring& ConditionName)const = 0;
 
+
+    /// <summary>
+    /// CCFのConditionが成立しているか確認する
+    /// </summary>
+    /// <param name="condition"> : 適用したいCondition</param>
+    /// <exception cref="std::invalid_argument">引数が範囲外</exception>
+    /// <exception cref="std::out_of_range">再帰処理回数が上限を超えた</exception>
+    /// <exception cref="std::exception">不明な変数型フラグ</exception>
+    /// <returns></returns>
+    virtual bool IsTrue(const LibFlag::Condition condition)const = 0;
+
+
+    /// <summary>
+    /// 確認用
+    /// </summary>
+    virtual tstring Show()const noexcept = 0;
+
+
     /// <summary>
     /// Cobold Command FileからConditionを読み取り，C++で使用するためのクラスを返す
     /// </summary>
