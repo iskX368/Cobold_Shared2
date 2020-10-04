@@ -1,0 +1,47 @@
+;****************************************************
+;
+;MCP Delay Line Manual p.72-73
+;トラブルシューティング
+;
+;
+;
+;
+;****************************************************
+
+
+
+;温度などによる電信信号タイミングふらつき
+define2 0,3600,10,AbsoluteEventTime,Time [s],-600,600,0.1,sumxyw,sumxyw [ns],none,always,time walk
+
+;time sum walk for different layers（MCP Delay Line ManualのFigure3.10の真ん中，pre-trigger events）
+define2 -400,400,1,raw_x,x(u) [channel],-200,200,p20,sumx,sumx [ns],none,clean,x/sumx,true
+define2 -400,400,1,raw_y,y(v) [channel],-200,200,p20,sumy,sumy [ns],none,clean,y/sumy,true
+define2 -400,400,1,raw_w,z(w) [channel],-200,200,p20,sumw,sumw [ns],none,clean,w/sumw,true
+
+;Whether delay-line layer pickups give consistent data from both ends
+define2 -150,150,p1015,x1,,-150,150,p1015,x2,,none,clean,x1/x2,true
+define2 -150,150,p1016,y1,,-150,150,p1016,y2,,none,clean,y1/y2,true
+define2 -150,150,p1017,z1,,-150,150,p1017,z2,,none,clean,z1/z2,true
+
+;よく分からない？
+define2 1,201,p1018,x1,PosX1 [mm],-100,100,p1019,PosY,PosY [mm],none,always,X1/PosY (mm),true
+
+;レイヤー一方の二番目ともう一方の一番目の信号の時間差
+define1 -400,400,1,reflection_in_MCP,dt [ns],none,always,reflection in MCP signal (ns)
+define1 -400,400,1,reflection_in_x1,dt [ns],none,always,delay-line reflection in x1 (ns)
+define1 -400,400,1,reflection_in_x2,dt [ns],none,always,delay-line reflection in x2 (ns)
+define1 -400,400,1,reflection_in_y1,dt [ns],none,always,delay-line reflection in y1 (ns)
+define1 -400,400,1,reflection_in_y2,dt [ns],none,always,delay-line reflection in y2 (ns)
+define1 -400,400,1,reflection_in_z1,dt [ns],none,always,delay-line reflection in z1 (ns)
+define1 -400,400,1,reflection_in_z2,dt [ns],none,always,delay-line reflection in z2 (ns)
+
+;時刻の和が一定値であると制限すると，負のチャンネルのノイズが消滅することより，これはpre-trigger eventsに相当
+define1 -400,400,1,reflection_in_x1,dt [ns],none,sumxMain,delay-line reflection in x1 (ns)
+define1 -400,400,1,reflection_in_x2,dt [ns],none,sumxMain,delay-line reflection in x2 (ns)
+define1 -400,400,1,reflection_in_y1,dt [ns],none,sumyMain,delay-line reflection in y1 (ns)
+define1 -400,400,1,reflection_in_y2,dt [ns],none,sumyMain,delay-line reflection in y2 (ns)
+define1 -400,400,1,reflection_in_z1,dt [ns],none,sumwMain,delay-line reflection in z1 (ns)
+define1 -400,400,1,reflection_in_z2,dt [ns],none,sumwMain,delay-line reflection in z2 (ns)
+
+
+
