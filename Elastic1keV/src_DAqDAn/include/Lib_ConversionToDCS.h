@@ -67,7 +67,7 @@ public:
 	/// <param name="AzimuthAngle_Detector_deg"> : 検出器中心に関する検出位置の方位角 (deg)</param>
 	/// <exception cref="std::invalid_argument"></exception>
 	/// <returns>散乱方位角 (deg)</returns>
-	static double VarPhi_deg(const double Phi_deg) noexcept;
+	//static double VarPhi_deg(const double Phi_deg) noexcept;
 
 
 	/// <summary>
@@ -81,8 +81,6 @@ public:
 	/// <returns></returns>
 	static double VarPhi(const double Phi, const LibFlag::AzimuthFormat PhiFormat, const LibFlag::AzimuthFormat VarPhiFormat);
 
-
-	static double VarPhi_deg_0_360(const double Phi_deg) noexcept;
 
 
 	/// <summary>
@@ -108,8 +106,6 @@ public:
 struct Parameters_ConversionToDCS_e19111401;
 using Conv_1000_1000 = ConversionToDCS1<Parameters_ConversionToDCS_e19111401>;
 
-struct Parameters_ConversionToDCS_e19111402;
-using Conv_1000_1001p55 = ConversionToDCS1<Parameters_ConversionToDCS_e19111402>;//入射エネルギー 1000 eV, 出射エネルギー 1001.55 eV
 
 
 
@@ -128,24 +124,11 @@ public:
 	/// <returns>(ao**2/sterad), ao**2 = 2.8002852E-21 m**2</returns>
 	static double dsigmadOmega(const double Theta_deg)noexcept;
 };
-struct Parameters_TheoreticalAtomicDCS_Elastic32_He_1000eV;
-using Elastic32_He_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_He_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_C_1000eV;
-using Elastic32_C_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_C_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_N_1000eV;
-using Elastic32_N_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_N_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_Ne_1000eV;
-using Elastic32_Ne_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_Ne_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_Cl_1000eV;
-using Elastic32_Cl_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_Cl_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_Ar_1000eV;
-using Elastic32_Ar_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_Ar_1000eV>;
-
-struct Parameters_TheoreticalAtomicDCS_Elastic32_Xe_1000eV;
-using Elastic32_Xe_1000eV = TheoreticalAtomicDCS_Elastic32<Parameters_TheoreticalAtomicDCS_Elastic32_Xe_1000eV>;
+using Elastic32_He_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::He_1000eV>;
+using Elastic32_C_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::C_1000eV>;
+using Elastic32_N_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::N_1000eV>;
+using Elastic32_Ne_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::Ne_1000eV>;
+using Elastic32_Cl_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::Cl_1000eV>;
+using Elastic32_Ar_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::Ar_1000eV>;
+using Elastic32_Xe_1000eV = TheoreticalAtomicDCS_Elastic32<Elastic32_FittedByDblGauss::Xe_1000eV>;
 

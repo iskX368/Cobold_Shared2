@@ -13,11 +13,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_CCFileCondition", "Lib_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_CurrentDAqInfo", "Lib_CurrentDAqInfo\Lib_CurrentDAqInfo.vcxproj", "{DB55C3BD-8F50-45C4-A58C-455AD48421FB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_CppAddress_CCFileCoordinate", "Lib_CppAddress_CCFileCoordinate\Lib_CppAddress_CCFileCoordinate.vcxproj", "{6ADE8234-6174-4E96-96EA-D8CCF574C502}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_CppAddCCFCrd", "Lib_CppAddCCFCrd\Lib_CppAddCCFCrd.vcxproj", "{6ADE8234-6174-4E96-96EA-D8CCF574C502}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_StringsForOutputFile", "Lib_StringsForOutputFile\Lib_StringsForOutputFile.vcxproj", "{412BBAEE-E36D-4477-A535-F78D43701A61}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_XYPairTableToXYDist", "Lib_XYPairTableToXYDist\Lib_XYPairTableToXYDist.vcxproj", "{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lib_ConversionToDCS", "Lib_ConversionToDCS\Lib_ConversionToDCS.vcxproj", "{7CE13FF1-AFF3-453A-91F3-EF1318133C22}"
 EndProject
@@ -149,22 +147,6 @@ Global
 		{412BBAEE-E36D-4477-A535-F78D43701A61}.Release|x64.Build.0 = Release|x64
 		{412BBAEE-E36D-4477-A535-F78D43701A61}.Release|x86.ActiveCfg = Release|Win32
 		{412BBAEE-E36D-4477-A535-F78D43701A61}.Release|x86.Build.0 = Release|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug(x64)|x64.ActiveCfg = Debug(x64)|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug(x64)|x64.Build.0 = Debug(x64)|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug(x64)|x86.ActiveCfg = Debug(x64)|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug(x64)|x86.Build.0 = Debug(x64)|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug|x64.ActiveCfg = Debug|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug|x64.Build.0 = Debug|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug|x86.ActiveCfg = Debug|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Debug|x86.Build.0 = Debug|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release(x64)|x64.ActiveCfg = Release(x64)|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release(x64)|x64.Build.0 = Release(x64)|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release(x64)|x86.ActiveCfg = Release(x64)|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release(x64)|x86.Build.0 = Release(x64)|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release|x64.ActiveCfg = Release|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release|x64.Build.0 = Release|x64
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release|x86.ActiveCfg = Release|Win32
-		{3BFC72AC-20DD-4262-A4EA-7CCB86B871E1}.Release|x86.Build.0 = Release|Win32
 		{7CE13FF1-AFF3-453A-91F3-EF1318133C22}.Debug(x64)|x64.ActiveCfg = Debug(x64)|x64
 		{7CE13FF1-AFF3-453A-91F3-EF1318133C22}.Debug(x64)|x64.Build.0 = Debug(x64)|x64
 		{7CE13FF1-AFF3-453A-91F3-EF1318133C22}.Debug(x64)|x86.ActiveCfg = Debug(x64)|Win32

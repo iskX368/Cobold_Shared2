@@ -574,7 +574,7 @@
     <ProjectReference Include="..\Lib_ConversionToDCS\Lib_ConversionToDCS.vcxproj">
       <Project>{7ce13ff1-aff3-453a-91f3-ef1318133c22}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Lib_CppAddress_CCFileCoordinate\Lib_CppAddress_CCFileCoordinate.vcxproj">
+    <ProjectReference Include="..\Lib_CppAddCCFCrd\Lib_CppAddCCFCrd.vcxproj">
       <Project>{6ade8234-6174-4e96-96ea-d8ccf574c502}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Lib_DetectorSensitivity\Lib_DetectorSensitivity.vcxproj">

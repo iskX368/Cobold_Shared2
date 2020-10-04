@@ -13,7 +13,7 @@
 
 PointInformation::~PointInformation() {}
 
-class PointInformation_impl:public PointInformation
+class PointInformation_impl :public PointInformation
 {
 public:
 	PointInformation_impl() = delete;
@@ -33,7 +33,7 @@ public:
 		}
 	}
 
-	PointInformation_impl(const size_t NumberOfPoints,const Difference dif,const bool closed0,const bool closed1)
+	PointInformation_impl(const size_t NumberOfPoints, const Difference dif, const bool closed0, const bool closed1)
 		:
 		m_NumPoints(NumberOfPoints),
 		m_Difference(dif),
@@ -43,24 +43,24 @@ public:
 
 
 	//#none
-	virtual size_t NumPoints()const noexcept override{
+	virtual size_t NumPoints()const noexcept override {
 		return m_NumPoints;
 	}
 	//#none
-	virtual bool IsClosed0()const noexcept override{
+	virtual bool IsClosed0()const noexcept override {
 		return m_IsClosed0;
 	}
 	//#none
-	virtual bool IsClosed1()const noexcept override{
+	virtual bool IsClosed1()const noexcept override {
 		return m_IsClosed1;
 	}
 	//#none
-	virtual Difference Enum_Difference()const noexcept override{
+	virtual Difference Enum_Difference()const noexcept override {
 		return m_Difference;
 	}
 
 	//#std::out_of_range
-	virtual std::pair<double, double> Point2PointInterval(const size_t Point)const override{
+	virtual std::pair<double, double> Point2PointInterval(const size_t Point)const override {
 		try {
 			if (Point >= NumPoints()) {
 				throw std::out_of_range("PointInformation::Point2PointInterval : Point");
@@ -148,7 +148,7 @@ private:
 		case PointInformation::Difference::Forward:
 			return 0.;
 		case PointInformation::Difference::Backward:
-			return - 1.;
+			return -1.;
 		case PointInformation::Difference::Central0:
 			return 0. - 0.5;
 		case PointInformation::Difference::Central1:
@@ -331,7 +331,7 @@ public:
 				}
 			}
 
-			
+
 			//ここまで異常なかったらセット
 			m_IsMonotonicallyIncreasing = tobeInc;
 			m_spPointInformation = sppointInformation;
@@ -356,11 +356,11 @@ public:
 	}
 
 	//全て初期化
-	explicit ScaleInformation_impl2(const bool IsMonoInc,const std::shared_ptr<PointInformation>& sppointInformation, std::vector<std::pair<double,double>>&& Intervals,std::vector<double>&& Representatives,std::pair<double,double>&& Range,const bool IsClosed0,const bool IsClosed1)
+	explicit ScaleInformation_impl2(const bool IsMonoInc, const std::shared_ptr<PointInformation>& sppointInformation, std::vector<std::pair<double, double>>&& Intervals, std::vector<double>&& Representatives, std::pair<double, double>&& Range, const bool IsClosed0, const bool IsClosed1)
 		:
 		m_IsMonotonicallyIncreasing(IsMonoInc),
 		m_spPointInformation(sppointInformation),
-		m_upIntervals(std::make_unique<std::vector<std::pair<double, double>>>( std::forward<std::vector<std::pair<double, double>>>(Intervals) )),
+		m_upIntervals(std::make_unique<std::vector<std::pair<double, double>>>(std::forward<std::vector<std::pair<double, double>>>(Intervals))),
 		m_upRepresentatives(std::make_unique<std::vector<double>>(std::forward<std::vector<double>>(Representatives))),
 		m_upRange(std::make_unique<std::pair<double, double>>(std::forward<std::pair<double, double>>(Range))),
 		m_IsClosed0(IsClosed0),
@@ -400,12 +400,12 @@ public:
 	}
 
 	//Interval の始端を含むならtrue #none
-	virtual bool IsClosed0()const noexcept{
+	virtual bool IsClosed0()const noexcept {
 		return m_IsClosed0;
 	}
 
 	//Interval の終端を含むならtrue #none
-	virtual bool IsClosed1()const noexcept{
+	virtual bool IsClosed1()const noexcept {
 		return m_IsClosed1;
 	}
 
@@ -415,7 +415,7 @@ public:
 	}
 
 	//区間の個数 #none
-	size_t NumIntervals()const noexcept { 
+	size_t NumIntervals()const noexcept {
 		if (m_upIntervals) {
 			return m_upIntervals->size();
 		}
@@ -550,7 +550,7 @@ private:
 		}
 	}*/
 
-	bool IsBetweenPair(const std::pair<double, double>& pr, const double Xvalue)const noexcept{
+	bool IsBetweenPair(const std::pair<double, double>& pr, const double Xvalue)const noexcept {
 		bool b0 = false, b1 = false;
 		if (IsMonotonicallyIncreasing()) {
 			//pr.first < pr.second
@@ -743,36 +743,61 @@ public:
 	ScaledHistogram1D_impl1() = delete;
 	virtual ~ScaledHistogram1D_impl1() = default;
 
-	ScaledHistogram1D_impl1(std::unique_ptr<ScaleInformation>&& up2ScaleInfo, std::unique_ptr<std::vector<double>>&& up2Histogram, std::unique_ptr<std::vector<double>>&& up2RawHistogram, std::unique_ptr<std::vector<double>>&& up2Width, std::unique_ptr<std::vector<double>>&& up2Hsitogram_Error)
+	ScaledHistogram1D_impl1(std::unique_ptr<std::vector<double>>&& up2Width, std::unique_ptr<std::vector<double>>&& up2RawHistogram, std::unique_ptr<std::vector<double>>&& up2RawHistogramErrorSq, std::unique_ptr<ScaleInformation>&& up2ScaleInfo)
 		:
-		m_up2ScaleInfo(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo)),
-		m_up2Histogram(std::forward<std::unique_ptr<std::vector<double>>>(up2Histogram)),
-		m_up2RawHistogram(std::forward<std::unique_ptr<std::vector<double>>>(up2RawHistogram)),
 		m_up2Width(std::forward<std::unique_ptr<std::vector<double>>>(up2Width)),
-		m_up2Hsitogram_Error(std::forward<std::unique_ptr<std::vector<double>>>(up2Hsitogram_Error))
+		m_up2RawHistogram(std::forward<std::unique_ptr<std::vector<double>>>(up2RawHistogram)),
+		m_up2RawHistogramErrorSq(std::forward<std::unique_ptr<std::vector<double>>>(up2RawHistogramErrorSq)),
+		m_up2ScaleInfo(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo))
 	{}
 
 
-	virtual void AddValue(const double Xvalue, const double Weight) {
+	//virtual void AddValue(const double Xvalue, const double Weight) {
+	//	try {
+	//		//負の数は例外？
+	//		m_up2RawHistogram->at(m_up2ScaleInfo->X2IntervalIndex(Xvalue)) += Weight;//そのまま加算
+
+	//	}
+	//	catch (std::invalid_argument&) {
+	//		throw;
+	//	}
+	//	catch (std::out_of_range&) {
+	//		throw;
+	//	}
+	//}
+
+	virtual void AddValue(const double Xvalue, const double Weight, const double AbsoluteErrorOfWeight) {
 		try {
-			//負の数は例外？
-			m_up2RawHistogram->at(m_up2ScaleInfo->X2IntervalIndex(Xvalue)) += Weight;//そのまま加算
+			if (Weight < 0) {
+				throw std::invalid_argument("ScaledHistogram1D::AddValue : Weight should be positive.");
+			}
+
+			size_t ind = m_up2ScaleInfo->X2IntervalIndex(Xvalue);
+
+			m_up2RawHistogram->at(ind) += Weight;//そのまま加算
+
+			m_up2RawHistogramErrorSq->at(ind) += AbsoluteErrorOfWeight * AbsoluteErrorOfWeight;//絶対誤差自乗を加算
+
+		}
+		catch (std::invalid_argument&) {
+			throw;
 		}
 		catch (std::out_of_range&) {
 			throw;
 		}
-		catch (std::exception&) {
-			throw;
-		}
 	}
+
 
 	virtual void ClearHistogram()noexcept {
 		for (auto& elm : *m_up2RawHistogram) {
 			elm = 0;
 		}
+		for (auto& elm : *m_up2RawHistogramErrorSq) {
+			elm = 0;
+		}
 	}
 
-	
+
 
 	//virtual const std::vector<double>& Get() {
 	//	try {
@@ -853,9 +878,9 @@ public:
 		}
 	}
 
+	//
 	virtual double GetAt(const size_t Pnt)const {
 		try {
-			//RefineHistogram();
 			return m_up2RawHistogram->at(Pnt) / m_up2Width->at(Pnt);
 		}
 		catch (std::out_of_range&) {
@@ -872,10 +897,10 @@ public:
 		}
 	}
 
+	//
 	virtual double GetEAt(const size_t Pnt)const {
 		try {
-			//RefineHistogram();
-			return sqrt(m_up2RawHistogram->at(Pnt)) / m_up2Width->at(Pnt);
+			return sqrt(m_up2RawHistogramErrorSq->at(Pnt)) / m_up2Width->at(Pnt);
 		}
 		catch (std::out_of_range&) {
 			throw;
@@ -891,10 +916,10 @@ public:
 		}
 	}
 
+	//
 	virtual double GetE1At(const size_t Pnt)const {
 		try {
-			//RefineHistogram();
-			return 1 / sqrt(m_up2RawHistogram->at(Pnt));
+			return sqrt(m_up2RawHistogramErrorSq->at(Pnt)) / m_up2RawHistogram->at(Pnt);
 		}
 		catch (std::out_of_range&) {
 			throw;
@@ -908,15 +933,14 @@ public:
 private:
 	std::unique_ptr<std::vector<double>> m_up2Width;//これで割る
 	std::unique_ptr<std::vector<double>> m_up2RawHistogram;//これに単に加算する
-	std::unique_ptr<std::vector<double>> m_up2Histogram;//割った結果をここに入れて返す	//使ってないので消す
-	std::unique_ptr<std::vector<double>> m_up2Hsitogram_Error;//エラーバーも			//使ってないので消す
+	std::unique_ptr<std::vector<double>> m_up2RawHistogramErrorSq;//絶対誤差自乗
 
 	std::unique_ptr<ScaleInformation> m_up2ScaleInfo;
 
 };
 
 
-std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr<PointInformation>& sppointInformation, std::function<double(const double)> f_Pnt2HorizontalScale) {
+std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr<PointInformation> & sppointInformation, std::function<double(const double)> f_Pnt2HorizontalScale) {
 	try {
 
 		//スケール
@@ -931,22 +955,18 @@ std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr
 		auto up2rhst = std::make_unique<std::vector<double>>();
 		up2rhst->reserve(numIntervals);
 
-		auto up2hst = std::make_unique<std::vector<double>>();
-		up2hst->reserve(numIntervals);
-
-		auto up2hst_err = std::make_unique<std::vector<double>>();
-		up2hst_err->reserve(numIntervals);
+		auto up2rhstesq = std::make_unique<std::vector<double>>();
+		up2rhstesq->reserve(numIntervals);
 
 		for (size_t i = 0; i < numIntervals; i++) {
-			up2hst->push_back(0);
+			up2rhstesq->push_back(0);
 			up2rhst->push_back(0);
 			up2wid->push_back(up2sci->IntervalWidth(i));
-			up2hst_err->push_back(0);
 		}
 
-		//ここまでエラーないなら作成
-		return std::make_unique<ScaledHistogram1D_impl1>(std::move(up2sci), std::move(up2hst), std::move(up2rhst), std::move(up2wid), std::move(up2hst_err));
 
+		//ここまでエラーないなら作成
+		return std::make_unique<ScaledHistogram1D_impl1>(std::move(up2wid), std::move(up2rhst), std::move(up2rhstesq), std::move(up2sci));
 
 	}
 	catch (std::invalid_argument&) {
@@ -960,12 +980,12 @@ std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr
 	}
 }
 
-std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr<PointInformation>& sppointInformation, const double Pnt2LinearScale_Ratio, const double Pnt2LinearScale_PntOffset) {
+std::unique_ptr<ScaledHistogram1D> ScaledHistogram1D::make(const std::shared_ptr<PointInformation> & sppointInformation, const double Pnt2LinearScale_Ratio, const double Pnt2LinearScale_PntOffset) {
 	try {
 
 		//関数
 		auto&& fLinear = [=](const double dPnt)->double {return (dPnt - Pnt2LinearScale_PntOffset) * Pnt2LinearScale_Ratio; };
-		
+
 		return ScaledHistogram1D::make(sppointInformation, std::move(fLinear));
 	}
 	catch (std::invalid_argument&) {
@@ -989,51 +1009,69 @@ public:
 	ScaledHistogram2D_impl() = delete;
 	virtual ~ScaledHistogram2D_impl() = default;
 
-	ScaledHistogram2D_impl(std::unique_ptr<ScaleInformation>&& up2ScaleInfo0, std::unique_ptr<ScaleInformation>&& up2ScaleInfo1, std::unique_ptr<std::vector<std::vector<double>>>&& up2Histogram, std::unique_ptr<std::vector<std::vector<double>>>&& up2RawHistogram, std::unique_ptr<std::vector<std::vector<double>>>&& up2Width, std::unique_ptr<std::vector<std::vector<double>>>&& up2Histogram_Error)
+
+	ScaledHistogram2D_impl(std::unique_ptr<std::vector<std::vector<double>>>&& up2Width, std::unique_ptr<std::vector<std::vector<double>>>&& up2RawHistogram, std::unique_ptr<std::vector<std::vector<double>>>&& up2RawHistogramErrorSq,
+		std::unique_ptr<ScaleInformation>&& up2ScaleInfo0, std::unique_ptr<ScaleInformation>&& up2ScaleInfo1
+	)
 		:
-		m_bRefined(false),
-		m_up2ScaleInfo0(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo0)),
-		m_up2ScaleInfo1(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo1)),
-		m_up2Histogram(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2Histogram)),
-		m_up2RawHistogram(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2RawHistogram)),
 		m_up2Width(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2Width)),
-		m_up2Histogram_Error(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2Histogram_Error))
+		m_up2RawHistogram(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2RawHistogram)),
+		m_up2RawHistogramErrorSq(std::forward<std::unique_ptr<std::vector<std::vector<double>>>>(up2RawHistogramErrorSq)),
+		m_up2ScaleInfo0(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo0)),
+		m_up2ScaleInfo1(std::forward<std::unique_ptr<ScaleInformation>>(up2ScaleInfo1))
 	{}
 
 
-	virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight = 1.0) {
+	//virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight = 1.0) {
+	//	try {
+	//		//負の数は例外？
+	//		m_up2RawHistogram->at(m_up2ScaleInfo0->X2IntervalIndex(Xvalue)).at(m_up2ScaleInfo1->X2IntervalIndex(Yvalue)) += Weight;//そのまま加算
+	//	}
+	//	catch (std::out_of_range&) {
+	//		throw;
+	//	}
+	//	catch (std::exception&) {
+	//		throw;
+	//	}
+	//}
+
+
+	virtual void AddValue(const double Xvalue, const double Yvalue, const double Weight, const double AbsoluteErrorOfWeight) {
 		try {
-			//負の数は例外？
-			m_up2RawHistogram->at(m_up2ScaleInfo0->X2IntervalIndex(Xvalue)).at(m_up2ScaleInfo1->X2IntervalIndex(Yvalue)) += Weight;//そのまま加算
-			m_bRefined = false;
+			if (Weight < 0) {
+				throw std::invalid_argument("ScaledHistogram2D::AddValue : Weight should be positive.");
+			}
+
+			size_t ind0 = m_up2ScaleInfo0->X2IntervalIndex(Xvalue);
+			size_t ind1 = m_up2ScaleInfo1->X2IntervalIndex(Yvalue);
+
+			m_up2RawHistogram->at(ind0).at(ind1) += Weight;//そのまま加算
+
+			m_up2RawHistogramErrorSq->at(ind0).at(ind1) += AbsoluteErrorOfWeight * AbsoluteErrorOfWeight;//絶対誤差自乗を加算
+		}
+		catch (std::invalid_argument&) {
+			throw;
 		}
 		catch (std::out_of_range&) {
 			throw;
 		}
-		catch (std::exception&) {
-			throw;
-		}
 	}
 
+
 	virtual void ClearHistogram() noexcept {
-		for (auto& elm1 : *m_up2Histogram) {
+		for (auto& elm1 : *m_up2RawHistogram) {
+			for (auto& elm2 : elm1) {
+				elm2 = 0;
+			}
+		}
+		for (auto& elm1 : *m_up2RawHistogramErrorSq) {
 			for (auto& elm2 : elm1) {
 				elm2 = 0;
 			}
 		}
 	}
 
-	virtual const std::vector<std::vector<double>>& Get() {
-		try {
-			RefineHistogram();
-			return *m_up2Histogram;
-		}
-		catch (std::out_of_range&) {
-			throw;
-		}
-	}
-
-	virtual std::vector<std::vector<double>> Get_()const {
+	virtual std::vector<std::vector<double>> Get()const {
 		try {
 			size_t im = m_up2ScaleInfo0->NumIntervals();
 			size_t jm = m_up2ScaleInfo1->NumIntervals();
@@ -1060,14 +1098,14 @@ public:
 
 	virtual std::vector<std::vector<double>> GetE()const {
 		try {
-			
+
 			size_t im = m_up2ScaleInfo0->NumIntervals();
 			size_t jm = m_up2ScaleInfo1->NumIntervals();
 
 			std::vector<std::vector<double>> v;
 			v.reserve(im);
 			for (size_t i = 0; i < im; i++) {
-				
+
 				std::vector<double> vv;
 				vv.reserve(jm);
 				for (size_t j = 0; j < jm; j++) {
@@ -1127,9 +1165,9 @@ public:
 		}
 	}
 
+	//
 	virtual double GetAt(const size_t Pnt0, const size_t Pnt1)const {
 		try {
-			//RefineHistogram();
 			return m_up2RawHistogram->at(Pnt0).at(Pnt1) / m_up2Width->at(Pnt0).at(Pnt1);
 		}
 		catch (std::out_of_range&) {
@@ -1146,10 +1184,10 @@ public:
 		}
 	}
 
+	//
 	virtual double GetEAt(const size_t Pnt0, const size_t Pnt1)const {
 		try {
-			//RefineHistogram();
-			return sqrt(m_up2RawHistogram->at(Pnt0).at(Pnt1)) / m_up2Width->at(Pnt0).at(Pnt1);
+			return sqrt(m_up2RawHistogramErrorSq->at(Pnt0).at(Pnt1)) / m_up2Width->at(Pnt0).at(Pnt1);
 		}
 		catch (std::out_of_range&) {
 			throw;
@@ -1165,9 +1203,10 @@ public:
 		}
 	}
 
+	//
 	virtual double GetE1At(const size_t Pnt0, const size_t Pnt1)const {
 		try {
-			return 1 / sqrt(m_up2RawHistogram->at(Pnt0).at(Pnt1));
+			return sqrt(m_up2RawHistogramErrorSq->at(Pnt0).at(Pnt1)) / m_up2RawHistogram->at(Pnt0).at(Pnt1);
 		}
 		catch (std::out_of_range&) {
 			throw;
@@ -1184,30 +1223,10 @@ public:
 
 
 private:
-	void RefineHistogram() {
-		try {
-			if (!m_bRefined) {
-				for (size_t i = 0; i < m_up2ScaleInfo0->NumIntervals(); i++) {
-					for (size_t j = 0; j < m_up2ScaleInfo1->NumIntervals(); j++) {
-						m_up2Histogram->at(i).at(j) = m_up2RawHistogram->at(i).at(j) / m_up2Width->at(i).at(j);
-					}
-				}
-				m_bRefined = true;
-			}
-		}
-		catch (std::out_of_range&) {
-			m_bRefined = false;
-			throw;
-		}
-	}
-
-	bool m_bRefined;
 
 	std::unique_ptr<std::vector<std::vector<double>>> m_up2Width;//これで割る
 	std::unique_ptr<std::vector<std::vector<double>>> m_up2RawHistogram;//これに単に加算する
-	std::unique_ptr<std::vector<std::vector<double>>> m_up2Histogram;//割った結果をここに入れて返す		//使ってないので消す
-	std::unique_ptr<std::vector<std::vector<double>>> m_up2Histogram_Error;//誤差も						//使ってないので消す
-
+	std::unique_ptr<std::vector<std::vector<double>>> m_up2RawHistogramErrorSq;
 
 	std::unique_ptr<ScaleInformation> m_up2ScaleInfo0;
 	std::unique_ptr<ScaleInformation> m_up2ScaleInfo1;
@@ -1216,7 +1235,7 @@ private:
 
 
 
-std::unique_ptr<ScaledHistogram2D> ScaledHistogram2D::make(const std::shared_ptr<PointInformation>& sppointInformation0, const std::shared_ptr<PointInformation>& sppointInformation1, std::function<double(const double)> f_Pnt2HorizontalScale0, std::function<double(const double)> f_Pnt2HorizontalScale1) {
+std::unique_ptr<ScaledHistogram2D> ScaledHistogram2D::make(const std::shared_ptr<PointInformation> & sppointInformation0, const std::shared_ptr<PointInformation> & sppointInformation1, std::function<double(const double)> f_Pnt2HorizontalScale0, std::function<double(const double)> f_Pnt2HorizontalScale1) {
 	try {
 
 		//スケール
@@ -1228,48 +1247,46 @@ std::unique_ptr<ScaledHistogram2D> ScaledHistogram2D::make(const std::shared_ptr
 
 
 		//ヒストグラム
-		auto up2hst = std::make_unique<std::vector<std::vector<double>>>();
-		up2hst->reserve(numIntervals0);
-		
+		auto up2rhstesq = std::make_unique<std::vector<std::vector<double>>>();
+		up2rhstesq->reserve(numIntervals0);
+
 		auto up2rhst = std::make_unique<std::vector<std::vector<double>>>();
 		up2rhst->reserve(numIntervals0);
 
 		auto up2wdth = std::make_unique<std::vector<std::vector<double>>>();
 		up2wdth->reserve(numIntervals0);
 
-		auto up2hst_err = std::make_unique<std::vector<std::vector<double>>>();
-		up2hst_err->reserve(numIntervals0);
-
 		for (size_t i = 0; i < numIntervals0; i++) {
-			
-			auto vhst = std::vector<double>();
+
+			auto vrhstesq = std::vector<double>();
 			auto vrhst = std::vector<double>();
 			auto vwdth = std::vector<double>();
-			auto vhst_err = std::vector<double>();
 
-			vhst.reserve(numIntervals1);
+			vrhstesq.reserve(numIntervals1);
 			vrhst.reserve(numIntervals1);
 			vwdth.reserve(numIntervals1);
-			vhst_err.reserve(numIntervals1);
-
 
 			for (size_t j = 0; j < numIntervals1; j++) {
-				vhst.push_back(0);
+				vrhstesq.push_back(0);
 				vrhst.push_back(0);
 				vwdth.push_back(up2sci0->IntervalWidth(i) * up2sci1->IntervalWidth(j));//二軸は直交
-				vhst_err.push_back(0);
 			}
 
-			
-			up2hst->push_back(std::move(vhst));
+
+			up2rhstesq->push_back(std::move(vrhstesq));
 			up2rhst->push_back(std::move(vrhst));
 			up2wdth->push_back(std::move(vwdth));
-			up2hst_err->push_back(std::move(vhst_err));
 
 		}
 
+		/*
+		ScaledHistogram2D_impl(std::unique_ptr<std::vector<std::vector<double>>>&& up2Width, std::unique_ptr<std::vector<std::vector<double>>>&& up2RawHistogram, std::unique_ptr<std::vector<std::vector<double>>>&& up2RawHistogramErrorSq,
+		std::unique_ptr<ScaleInformation>&& up2ScaleInfo0, std::unique_ptr<ScaleInformation>&& up2ScaleInfo1
+		)
+		*/
+
 		//ここまでエラーないなら作成
-		return std::make_unique<ScaledHistogram2D_impl>(std::move(up2sci0), std::move(up2sci1), std::move(up2hst), std::move(up2rhst), std::move(up2wdth), std::move(up2hst_err));
+		return std::make_unique<ScaledHistogram2D_impl>(std::move(up2wdth), std::move(up2rhst), std::move(up2rhstesq), std::move(up2sci0), std::move(up2sci1));
 
 	}
 	catch (std::invalid_argument&) {

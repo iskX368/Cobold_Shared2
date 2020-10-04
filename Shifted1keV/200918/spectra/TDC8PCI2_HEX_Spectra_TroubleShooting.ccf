@@ -36,12 +36,12 @@ define1 -400,400,1,reflection_in_z1,dt [ns],none,always,delay-line reflection in
 define1 -400,400,1,reflection_in_z2,dt [ns],none,always,delay-line reflection in z2 (ns)
 
 ;時刻の和が一定値であると制限すると，負のチャンネルのノイズが消滅することより，これはpre-trigger eventsに相当
-define1 -400,400,1,reflection_in_x1,dt [ns],none,sumxMain,delay-line reflection in x1 (ns)
-define1 -400,400,1,reflection_in_x2,dt [ns],none,sumxMain,delay-line reflection in x2 (ns)
-define1 -400,400,1,reflection_in_y1,dt [ns],none,sumyMain,delay-line reflection in y1 (ns)
-define1 -400,400,1,reflection_in_y2,dt [ns],none,sumyMain,delay-line reflection in y2 (ns)
-define1 -400,400,1,reflection_in_z1,dt [ns],none,sumwMain,delay-line reflection in z1 (ns)
-define1 -400,400,1,reflection_in_z2,dt [ns],none,sumwMain,delay-line reflection in z2 (ns)
+;define1 -400,400,1,reflection_in_x1,dt [ns],none,sumxMain,delay-line reflection in x1 (ns)
+;define1 -400,400,1,reflection_in_x2,dt [ns],none,sumxMain,delay-line reflection in x2 (ns)
+;define1 -400,400,1,reflection_in_y1,dt [ns],none,sumyMain,delay-line reflection in y1 (ns)
+;define1 -400,400,1,reflection_in_y2,dt [ns],none,sumyMain,delay-line reflection in y2 (ns)
+;define1 -400,400,1,reflection_in_z1,dt [ns],none,sumwMain,delay-line reflection in z1 (ns)
+;define1 -400,400,1,reflection_in_z2,dt [ns],none,sumwMain,delay-line reflection in z2 (ns)
 
 
 

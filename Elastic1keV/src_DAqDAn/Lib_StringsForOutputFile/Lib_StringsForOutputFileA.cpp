@@ -44,7 +44,7 @@ void GetWaveName(StringsForIgorTextWaveA::tstring& Dst, const StringsForIgorText
 class StringsForOutputFileA_impl :public StringsForOutputFileA {
 public:
 	using tstringstream = std::basic_stringstream<type_char>;
-	
+
 
 
 	StringsForOutputFileA_impl() = delete;
@@ -63,7 +63,7 @@ public:
 	virtual ~StringsForOutputFileA_impl() = default;
 
 	virtual __int32 GetHeaderString(tstring& Dst)const noexcept {
-		
+
 		tstringstream tss;
 		tstring tstr;
 		__int32 ret = 0;
@@ -85,8 +85,8 @@ public:
 			ret += 2;
 		}
 		tss << tstr;
-		
-		
+
+
 		//tss<< std::endl
 
 		Dst.clear();
@@ -96,7 +96,7 @@ public:
 	}
 
 	virtual __int32 GetCoordinatesString(tstring& Dst)const noexcept {
-		
+
 		tstringstream tss;
 
 		for (const auto& dataIndex : m_DataIndex) {
@@ -112,7 +112,7 @@ public:
 	}
 
 	virtual __int32 GetValuesString(tstring& Dst)noexcept {
-		
+
 		//もし既にエラーが出ている場合は何もしない
 		if (m_ValueStringFlag != 0) {
 			return m_ValueStringFlag;
@@ -177,7 +177,7 @@ private:
 
 	//日時を取得
 	static __int32 GetTimeString(tstring& Dst) {
-		
+
 		//struct tm newtime;
 		//__time64_t long_time;
 		//
@@ -268,9 +268,9 @@ std::unique_ptr<StringsForOutputFileA> StringsForOutputFileA::make(std::initiali
 		//enumを文字列へ変換
 		std::vector<tstring> flagCoordinates;
 		flagCoordinates.reserve(List_FlagCoordinate.size());
-		
+
 		for (const auto& flag : List_FlagCoordinate) {
-			
+
 			//こうやって掃引するとNAMEOF_ENUMは成功する
 			/*for (type_Flag f = Flag_Coordinate_Min; f <= Flag_Coordinate_Max; f++) {
 				StringsForOutputFile_Flags::Flag_Coordinate ff = static_cast<StringsForOutputFile_Flags::Flag_Coordinate>(f);
@@ -287,10 +287,10 @@ std::unique_ptr<StringsForOutputFileA> StringsForOutputFileA::make(std::initiali
 			}
 
 		}
-		
+
 		//要素を掃引
 		for (const auto& nam : flagCoordinates) {
-			
+
 			//型を検査
 			di = CPPA_CCFC::DataIndex(nam);
 
@@ -360,14 +360,14 @@ std::unique_ptr<StringsForOutputFileA> StringsForOutputFileA::make(const LibFlag
 		LibFlag::type_Flag x;
 		//こうやって掃引するとNAMEOF_ENUMは成功する
 		for (LibFlag::type_Flag f = LibFlag::Coordinate_Min; f <= LibFlag::Coordinate_Max; f++) {
-			
+
 			x = 1 << f;
 
 			if ((BitFlags_Coordinate & x) != 0) {
 				const auto ff = static_cast<LibFlag::Coordinate>(f);
 				flagCoordinates.push_back(tstring(NAMEOF_ENUM(ff)));
 			}
-			
+
 		}
 
 		//要素を掃引
@@ -423,93 +423,126 @@ std::unique_ptr<StringsForOutputFileA> StringsForOutputFileA::make(const LibFlag
 
 
 
-void StringsForIgorTextWaveA::WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo) {
-	try {
-		if (Vec.size() != ScaleInfo.NumIntervals()) {
-			throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec and ScaleInfo.NumIntervals");
-		}
+//void StringsForIgorTextWaveA::WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave, const std::vector<double>& Vec, const ScaleInformation& ScaleInfo) {
+//	try {
+//		if (Vec.size() != ScaleInfo.NumIntervals()) {
+//			throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec and ScaleInfo.NumIntervals");
+//		}
+//
+//		tstring ans = "";
+//
+//		tstring wn = "";
+//		GetWaveName(wn, Name_ValueWave);
+//
+//		tstring wns = "";
+//		GetWaveName(wns, Name_ScaleWave);
+//
+//		type_char buf[128];
+//
+//		sprintf_s(buf, "WAVES/D/O\t%s\t%s\nBEGIN\n", wns.c_str(), wn.c_str());
+//		ans += buf;
+//
+//		for (size_t i = 0; i < Vec.size(); i++) {
+//			sprintf_s(buf, "%.17g\t%.17g\n", ScaleInfo.IntervalIndex2XRepresentative(i), Vec.at(i));
+//			ans += buf;
+//		}
+//		ans += "END\n";
+//		
+//		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns.c_str(), wns.c_str());
+//		ans += buf;
+//
+//		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wn.c_str(), wn.c_str());
+//		ans += buf;
+//
+//		ans += "\n";
+//
+//		Dst.clear();
+//		Dst = ans;
+//
+//	}
+//	catch (std::invalid_argument&) {
+//		throw;
+//	}
+//	catch (std::out_of_range&) {
+//		throw;
+//	}
+//	catch (std::exception&) {
+//		throw;
+//	}
+//}
 
+
+void StringsForIgorTextWaveA::WaveText1(tstring& Dst, std::initializer_list<std::tuple<std::vector<double>, tstring, tstring>> list_Value1D_ValueWaveName_Comment)noexcept {
+	type_char buf[128];
+
+	auto WT = [&buf](const std::vector<double>& Value1D, const tstring& ValueWaveName, const tstring& Comment)->tstring
+	{
 		tstring ans = "";
 
 		tstring wn = "";
-		GetWaveName(wn, Name_ValueWave);
+		GetWaveName(wn, ValueWaveName);
 
-		tstring wns = "";
-		GetWaveName(wns, Name_ScaleWave);
-
-		type_char buf[128];
-
-		sprintf_s(buf, "WAVES/D/O\t%s\t%s\nBEGIN\n", wns.c_str(), wn.c_str());
+		sprintf_s(buf, "WAVES/D/O\t%s\nBEGIN\n", wn.c_str());
 		ans += buf;
 
-		for (size_t i = 0; i < Vec.size(); i++) {
-			sprintf_s(buf, "%.17g\t%.17g\n", ScaleInfo.IntervalIndex2XRepresentative(i), Vec.at(i));
+		for (const auto& v : Value1D) {
+			sprintf_s(buf, "%.17g\n", v);
 			ans += buf;
 		}
+
 		ans += "END\n";
-		
-		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns.c_str(), wns.c_str());
-		ans += buf;
 
 		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wn.c_str(), wn.c_str());
 		ans += buf;
 
+		//X Note w, "wave"
+		sprintf_s(buf, "X Note %s, \"%s\"\n", wn.c_str(), Comment.c_str());
+		ans += buf;
+
+		return std::move(ans);
+	};
+
+
+	tstring ans = "";
+
+	for (const auto& tpl : list_Value1D_ValueWaveName_Comment) {
+		ans += WT(std::get<0>(tpl), std::get<1>(tpl), std::get<2>(tpl));
 		ans += "\n";
+	}
 
-		Dst.clear();
-		Dst = ans;
 
-	}
-	catch (std::invalid_argument&) {
-		throw;
-	}
-	catch (std::out_of_range&) {
-		throw;
-	}
-	catch (std::exception&) {
-		throw;
-	}
+	Dst.clear();
+	Dst = std::move(ans);
 }
 
 
 
-void StringsForIgorTextWaveA::WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1) {
-	try {
+void StringsForIgorTextWaveA::WaveText2(tstring& Dst, std::initializer_list<std::tuple<std::vector<std::vector<double>>, tstring, tstring>> list_Value2D_ValueWaveName_Comment)noexcept {
 
-		const size_t im = ScaleInfo0.NumIntervals();
-		const size_t jm = ScaleInfo1.NumIntervals();
+	type_char buf[256];
 
-		if (Vec.size() != im) {
-			throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec.at and ScaleInfo0.NumIntervals");
-		}
+	auto WT = [&buf](const std::vector<std::vector<double>>& Value2D, const tstring& ValueWaveName, const tstring& Comment)->tstring
+	{
+		const size_t im = Value2D.size();
+		const size_t jm = Value2D.at(0).size();
 
-		for (size_t i = 0; i < im; i++) {
-			if (Vec.at(i).size() != jm) {
-				throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec.at.at and ScaleInfo1.NumIntervals");
+		for (const auto& vv : Value2D) {
+			if (jm != vv.size()) {
+				throw std::invalid_argument("A jagged array");
 			}
 		}
-
 
 		tstring ans = "";
 
 		tstring wn = "";
-		GetWaveName(wn, Name_ValueWave);
-
-		tstring wns0 = "";
-		GetWaveName(wns0, Name_ScaleWave0);
-
-		tstring wns1 = "";
-		GetWaveName(wns1, Name_ScaleWave1);
-
-		type_char buf[256];
-
+		GetWaveName(wn, ValueWaveName);
 
 		sprintf_s(buf, "WAVES/D/O/N=(%lld,%lld)\t%s\nBEGIN\n", im, jm, wn.c_str());
 		ans += buf;
 
-		for (size_t i = 0; i < im; i++) {
-			for (size_t j = 0; j < jm; j++) {
-				sprintf_s(buf, "%.17g\t", Vec.at(i).at(j));
+		for (const auto& vv : Value2D) {
+			for (const auto& val : vv) {
+				sprintf_s(buf, "%.17g\t", val);
 				ans += buf;
 			}
 			ans += "\n";
@@ -520,67 +553,138 @@ void StringsForIgorTextWaveA::WaveText(tstring& Dst, const tstring& Name_ValueWa
 		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s; SetScale d 0,0,\"\", %s\n", wn.c_str(), wn.c_str(), wn.c_str());
 		ans += buf;
 
+		//X Note w, "wave"
+		sprintf_s(buf, "X Note %s, \"%s\"\n", wn.c_str(), Comment.c_str());
+		ans += buf;
+
+		return std::move(ans);
+	};
+
+
+	tstring ans = "";
+
+	for (const auto& tpl : list_Value2D_ValueWaveName_Comment) {
+		ans += WT(std::get<0>(tpl), std::get<1>(tpl), std::get<2>(tpl));
 		ans += "\n";
-
-
-
-
-
-		//イメージの境界を定義するので二次元データよりポイント数が一つ大きい
-		sprintf_s(buf, "WAVES/D/O\t%s\nBEGIN\n", wns0.c_str());
-		ans += buf;
-		
-		for (size_t i = 0; i < im; i++) {
-			sprintf_s(buf, "%.17g\n", ScaleInfo0.Interval(i).first);
-			ans += buf;
-		}
-		sprintf_s(buf, "%.17g\n", ScaleInfo0.Interval(im - 1).second);
-		ans += buf;
-
-		ans += "END\n";
-
-		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns0.c_str(), wns0.c_str());
-		ans += buf;
-
-		ans += "\n";
-
-
-
-
-		//イメージの境界を定義するので二次元データよりポイント数が一つ大きい
-		sprintf_s(buf, "WAVES/D/O\t%s\nBEGIN\n", wns1.c_str());
-		ans += buf;
-
-		for (size_t j = 0; j < jm; j++) {
-			sprintf_s(buf, "%.17g\n", ScaleInfo1.Interval(j).first);
-			ans += buf;
-		}
-		sprintf_s(buf, "%.17g\n", ScaleInfo1.Interval(jm - 1).second);
-		ans += buf;
-
-		ans += "END\n";
-
-		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns1.c_str(), wns1.c_str());
-		ans += buf;
-
-		ans += "\n";
-
-
-		Dst.clear();
-		Dst = ans;
-
-
 	}
-	catch (std::invalid_argument&) {
-		throw;
-	}
-	catch (std::out_of_range&) {
-		throw;
-	}
-	catch (std::exception&) {
-		throw;
-	}
+
+
+	Dst.clear();
+	Dst = std::move(ans);
+
 }
+
+
+
+
+//void StringsForIgorTextWaveA::WaveText(tstring& Dst, const tstring& Name_ValueWave, const tstring& Name_ScaleWave0, const tstring& Name_ScaleWave1, const std::vector<std::vector<double>>& Vec, const ScaleInformation& ScaleInfo0, const ScaleInformation& ScaleInfo1) {
+//	try {
+//
+//		const size_t im = ScaleInfo0.NumIntervals();
+//		const size_t jm = ScaleInfo1.NumIntervals();
+//
+//		if (Vec.size() != im) {
+//			throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec.at and ScaleInfo0.NumIntervals");
+//		}
+//
+//		for (size_t i = 0; i < im; i++) {
+//			if (Vec.at(i).size() != jm) {
+//				throw std::invalid_argument("StringsForIgorTextWaveA::WaveText : Different sizes of Vec.at.at and ScaleInfo1.NumIntervals");
+//			}
+//		}
+//
+//
+//		tstring ans = "";
+//
+//		tstring wn = "";
+//		GetWaveName(wn, Name_ValueWave);
+//
+//		tstring wns0 = "";
+//		GetWaveName(wns0, Name_ScaleWave0);
+//
+//		tstring wns1 = "";
+//		GetWaveName(wns1, Name_ScaleWave1);
+//
+//		type_char buf[256];
+//
+//
+//		sprintf_s(buf, "WAVES/D/O/N=(%lld,%lld)\t%s\nBEGIN\n", im, jm, wn.c_str());
+//		ans += buf;
+//
+//		for (size_t i = 0; i < im; i++) {
+//			for (size_t j = 0; j < jm; j++) {
+//				sprintf_s(buf, "%.17g\t", Vec.at(i).at(j));
+//				ans += buf;
+//			}
+//			ans += "\n";
+//		}
+//
+//		ans += "END\n";
+//
+//		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s; SetScale d 0,0,\"\", %s\n", wn.c_str(), wn.c_str(), wn.c_str());
+//		ans += buf;
+//
+//		ans += "\n";
+//
+//
+//
+//
+//
+//		//イメージの境界を定義するので二次元データよりポイント数が一つ大きい
+//		sprintf_s(buf, "WAVES/D/O\t%s\nBEGIN\n", wns0.c_str());
+//		ans += buf;
+//		
+//		for (size_t i = 0; i < im; i++) {
+//			sprintf_s(buf, "%.17g\n", ScaleInfo0.Interval(i).first);
+//			ans += buf;
+//		}
+//		sprintf_s(buf, "%.17g\n", ScaleInfo0.Interval(im - 1).second);
+//		ans += buf;
+//
+//		ans += "END\n";
+//
+//		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns0.c_str(), wns0.c_str());
+//		ans += buf;
+//
+//		ans += "\n";
+//
+//
+//
+//
+//		//イメージの境界を定義するので二次元データよりポイント数が一つ大きい
+//		sprintf_s(buf, "WAVES/D/O\t%s\nBEGIN\n", wns1.c_str());
+//		ans += buf;
+//
+//		for (size_t j = 0; j < jm; j++) {
+//			sprintf_s(buf, "%.17g\n", ScaleInfo1.Interval(j).first);
+//			ans += buf;
+//		}
+//		sprintf_s(buf, "%.17g\n", ScaleInfo1.Interval(jm - 1).second);
+//		ans += buf;
+//
+//		ans += "END\n";
+//
+//		sprintf_s(buf, "X SetScale/P x 0,1,\"\", %s; SetScale y 0,0,\"\", %s\n", wns1.c_str(), wns1.c_str());
+//		ans += buf;
+//
+//		ans += "\n";
+//
+//
+//		Dst.clear();
+//		Dst = ans;
+//
+//
+//	}
+//	catch (std::invalid_argument&) {
+//		throw;
+//	}
+//	catch (std::out_of_range&) {
+//		throw;
+//	}
+//	catch (std::exception&) {
+//		throw;
+//	}
+//}
 
 
 

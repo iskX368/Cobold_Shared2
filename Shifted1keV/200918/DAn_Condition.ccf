@@ -143,7 +143,7 @@ Parameter 1110,0		;書き込むときのCondition
 
 
 ;***********************************
-;p1103	解析対象の試料を選択する．DCS理論値をプロットするために指定する．Lib_Inputのenumclassを参照
+;p1111	解析対象の試料を選択する．DCS理論値をプロットするために指定する．Lib_Inputのenumclassを参照
 ;新しく追加，削除するときは
 ;1. 上記ヘッダファイルのenumclassを変更
 ;2. Flag_Condition_Maxを変更

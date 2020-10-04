@@ -32,6 +32,420 @@
 namespace LAES2 {
 
 
+	//C++プログラムでConditionを使う
+	std::unique_ptr<CCFileCondition> up2CCFileCondition;
+
+
+	//個別イベントごとにCoordinateを数表で出力する
+	class EventProc {
+	public:
+		EventProc() = delete;
+		EventProc(const __int32 WriteCoordinate, const TCHAR sep, const std::basic_string<TCHAR>& ConditionStr)
+			:
+			m_up2StringForOutputFile(nullptr),
+			m_ConditionStr(ConditionStr),
+			m_isOK(false),
+			tstr()
+		{
+			try {
+				auto coord = static_cast<LibFlag::type_Flag>(WriteCoordinate > 0 ? WriteCoordinate : 0);
+				m_up2StringForOutputFile = make_StringsForOutputFile(coord, sep);
+				if (!m_up2StringForOutputFile) {
+					throw std::exception("EventProc::EventProc : Failure in making StringsForOutputFile");
+				}
+				m_isOK = true;
+			}
+			catch (std::exception& ex) {
+				m_up2StringForOutputFile.reset();
+				AfxMessageBox(ex.what());
+				m_isOK = false;
+			}
+		}
+		~EventProc() = default;
+
+		void WriteHeaderString(CStdioFile& file_output) {
+			try {
+				if (m_isOK) {
+
+					//冒頭の情報
+					m_up2StringForOutputFile->GetHeaderString(tstr);
+					file_output.WriteString(tstr.c_str());
+					file_output.WriteString(_T("\n"));
+
+					//Condition
+					file_output.WriteString(m_ConditionStr.c_str());
+					file_output.WriteString(_T("\n"));
+
+					//Coordinate名称
+					m_up2StringForOutputFile->GetCoordinatesString(tstr);
+					file_output.WriteString(tstr.c_str());
+					file_output.WriteString(_T("\n"));
+				}
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+		void WriteCoordinateValueString(CStdioFile& file_output) {
+			try {
+				if (m_isOK) {
+					if (up2CCFileCondition->IsTrue(m_ConditionStr)) {
+						if (m_up2StringForOutputFile->GetValuesString(tstr) == 0) {
+							file_output.WriteString(tstr.c_str());
+							file_output.WriteString(_T("\n"));
+						}
+					}
+				}
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+		bool isOK()const noexcept { return m_isOK; }
+
+		//書き出し用クラス
+		std::unique_ptr<StringsForOutputFile> m_up2StringForOutputFile;
+
+		//採用するCondition
+		const std::basic_string<TCHAR> m_ConditionStr;
+
+	private:
+		bool m_isOK;
+		std::basic_string<TCHAR> tstr;
+	};
+
+	//ヒストグラムをまとめて出力する
+	template<class class_DetectorSensitivity_Ef, class class_Conv_Ei_Ef>
+	class HistoProc_Ei_Ef {
+	public:
+
+		using class_DCSHistogram_Ei_Ef = DCSHistogram<class_Conv_Ei_Ef>;
+
+
+		HistoProc_Ei_Ef()
+			:
+			up2CI(nullptr),
+			up2DetectorSensitivity(nullptr),
+			up2Theta_deg(nullptr),
+			up2Theta_deg_VarPhi(nullptr),
+			up2R(nullptr),
+			up2R_Phi(nullptr),
+			up2RawTheta_deg(nullptr),
+			up2RawTheta_deg_VarPhi(nullptr),
+			up2RawR(nullptr),
+			up2RawR_Phi(nullptr),
+			m_isOK(false)
+		{
+			try {
+				//区間の個数
+				//I0=(0,R1], ... , I_(n-1)=(R_(n-1), R_n], I_n=(R_n, R_max]
+				const size_t numIntervals = static_cast<size_t>(ceil(dRmax / dBinR));
+				const size_t Dimsize_Phi_deg = static_cast<size_t>(i32VarPhiNumSteps > 0 ? i32VarPhiNumSteps : 12);//Phiのサイズ
+
+				auto pinf_CI = make_PointInformation(64, PointInformation::Difference::Central0);
+				auto pinf = make_PointInformation(numIntervals, PointInformation::Difference::Backward);
+
+
+				up2CI = make_ScaledHistogram1D(pinf_CI);
+
+				up2DetectorSensitivity = class_DetectorSensitivity_Ef::make(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
+
+				up2Theta_deg = class_DCSHistogram_Ei_Ef::make_1D_vs_Theta_deg(numIntervals, dBinR);
+				up2Theta_deg_VarPhi = class_DCSHistogram_Ei_Ef::make_2D_vs_Theta_deg_VarPhi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
+
+				up2R = class_DCSHistogram_Ei_Ef::make_1D_vs_R(numIntervals, dBinR);
+				up2R_Phi = class_DCSHistogram_Ei_Ef::make_2D_vs_R_Phi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
+
+				up2RawTheta_deg = class_DCSHistogram_Ei_Ef::make_1D_vs_Theta_deg(numIntervals, dBinR);
+				up2RawTheta_deg_VarPhi = class_DCSHistogram_Ei_Ef::make_2D_vs_Theta_deg_VarPhi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
+
+				up2RawR = class_DCSHistogram_Ei_Ef::make_1D_vs_R(numIntervals, dBinR);
+				up2RawR_Phi = class_DCSHistogram_Ei_Ef::make_2D_vs_R_Phi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
+
+				m_isOK = true;
+			}
+			catch (std::exception& ex) {
+
+				up2CI.reset();
+
+				up2Theta_deg.reset();
+				up2Theta_deg_VarPhi.reset();
+
+				up2R.reset();
+				up2R_Phi.reset();
+
+				up2RawTheta_deg.reset();
+				up2RawTheta_deg_VarPhi.reset();
+
+				up2RawR.reset();
+				up2RawR_Phi.reset();
+
+				up2DetectorSensitivity.reset();
+
+				m_isOK = false;
+
+				AfxMessageBox(ex.what());
+			}
+		}
+		~HistoProc_Ei_Ef() = default;
+
+		//Crdに全て書き終わってから実行する
+		void AddToHist() {
+			try {
+				//コンストラクタでエラーなし
+				if (m_isOK) {
+
+					//座標計算でスペクトルレンジ外なら例外
+
+					up2CI->AddValue(static_cast<double>(Crd::ConsistencyIndicator), 1, 1);
+
+
+					//
+					//double r, phi;
+					//LibFlag::OrthoToRPhi(Crd::PosX, Crd::PosY, i32PhiConversion, dCRPhix, dCRPhiy, r, phi);
+
+					//感度補正による正味のカウント数を加算
+					auto w_we = up2DetectorSensitivity->Weight(Crd::r, Crd::phi);
+					double we1 = w_we.second / w_we.first;
+					double SignalAmount = w_we.first;
+					double SignalError = w_we.first * sqrt(1 + we1 * we1);
+
+					double th = class_Conv_Ei_Ef::Theta_deg(Crd::r);
+					double vph = class_Conv_Ei_Ef::VarPhi(Crd::phi, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion), static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
+
+
+					up2Theta_deg->AddValue(th, SignalAmount, SignalError);
+					up2Theta_deg_VarPhi->AddValue(th, vph, SignalAmount, SignalError);
+
+					up2R->AddValue(Crd::r, SignalAmount, SignalError);
+					up2R_Phi->AddValue(Crd::r, Crd::phi, SignalAmount, SignalError);
+
+
+					//感度補正なし
+					up2RawTheta_deg->AddValue(th, 1, 1);
+					up2RawTheta_deg_VarPhi->AddValue(th, vph, 1, 1);
+
+					up2RawR->AddValue(Crd::r, 1, 1);
+					up2RawR_Phi->AddValue(Crd::r, Crd::phi, 1, 1);
+
+				}
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+		//全部積算終わったらファイルへ書き出す
+		void WriteToIgorTextFile(CStdioFile& file_output, const bool Put_IGOR_First, const std::basic_string<TCHAR>& Wave_Comment, const std::basic_string<TCHAR>& WaveName_Suffix) {
+			try {
+				if (m_isOK) {
+
+					std::basic_string<TCHAR> tstr;
+
+					//スケール情報
+					const auto& sinfoR = up2R_Phi->ScaleInfo0();
+					const auto& sinfoTheta_deg = up2Theta_deg_VarPhi->ScaleInfo0();
+
+					const auto& sinfoVarPhi = up2Theta_deg_VarPhi->ScaleInfo1();
+					const auto& sinfoPhi = up2R_Phi->ScaleInfo1();
+
+
+					//DCSの理論曲線
+					//std::unique_ptr<std::vector <double>> DCS_Theory_vs_Theta_deg;
+					//std::unique_ptr<std::vector <double>> DCS_Theory_vs_R;
+
+					//std::unique_ptr<std::vector<std::vector <double>>> DCS_Theory_vs_Theta_deg_VarPhi;
+					//std::unique_ptr<std::vector<std::vector <double>>> DCS_Theory_vs_R_Phi;
+
+					////理論値をプロット
+					//switch (static_cast<LibFlag::Sample>(i32SelectAtom))
+					//{
+					//case LibFlag::Sample::He:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::C:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::N:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::Ne:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::Cl:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::Ar:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//case LibFlag::Sample::Xe:
+					//	DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
+					//	DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_1D_vs_R(sinfoR);
+					//	DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
+					//	DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
+					//	break;
+					//default:
+					//	DCS_Theory_vs_Theta_deg.reset();
+					//	DCS_Theory_vs_R.reset();
+					//	DCS_Theory_vs_Theta_deg_VarPhi.reset();
+					//	DCS_Theory_vs_R_Phi.reset();
+					//	throw std::exception("Failure on making Unique ptr to DCSTheoretical curves");
+					//}
+
+
+
+					//横軸 bin の代表値を取得する関数　一次元グラフ用
+					auto ToScales = [](const ScaleInformation& sci) {
+						std::vector<double> v;
+						v.reserve(sci.NumIntervals());
+						for (size_t i = 0; i < sci.NumIntervals(); i++) {
+							v.push_back(sci.IntervalIndex2XRepresentative(i));
+						}
+						return std::move(v);
+					};
+					//横軸 bin の境界を取得する関数　二次元イメージ用
+					auto ToBoundaries = [](const ScaleInformation& sci) {
+						std::vector<double> v;
+						v.reserve(sci.NumIntervals() + 1);
+						for (size_t i = 0; i < sci.NumIntervals(); i++) {
+							v.push_back(sci.Interval(i).first);
+						}
+						v.push_back(sci.Interval(sci.NumIntervals() - 1).second);
+						return std::move(v);
+					};
+
+					//ウェーブ名の先頭と末尾に文字列つける
+					auto SetName = [&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
+						const auto Src = CurrentDAqInfo::SourceLMFileName();//ソースlmf名称を先頭に
+						return Src + Name + WaveName_Suffix;
+					};
+
+					//itx へ出力
+					if (Put_IGOR_First) {
+						file_output.WriteString(_T("IGOR\n"));
+					}
+
+					//積算を終えたらCalibrateを実行して結果を記録する
+					StringsForIgorTextWave::WaveText1(tstr,
+						{
+							{ToScales(sinfoR),SetName(_T("g_R")), _T("For 1D graphs")},//横軸スケール R
+							{ToScales(sinfoTheta_deg),SetName(_T("g_Th")),_T("For 1D graphs")},//横軸スケール Theta_deg
+
+							{up2RawR->Get(),SetName(_T("h_R")), Wave_Comment},//vs R, 感度補正なし
+							{up2RawR->GetE(),SetName(_T("hE_R")), Wave_Comment},//vs R, 感度補正なし
+
+
+							{up2RawTheta_deg->Get(), SetName(_T("h_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
+							{up2RawTheta_deg->GetE(), SetName(_T("hE_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
+
+
+							//{std::move(*DCS_Theory_vs_R),_T("DCS_R"),_T("Elastic32, 1000 eV")},//vs R, DCS理論曲線
+							//{std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Th"),_T("Elastic32, 1000 eV")},//vs Theta_deg, DCS理論曲線
+
+
+							{up2Theta_deg->Get(),SetName(_T("c_Th")),Wave_Comment},//vs Theta_deg, 感度補正あり
+							{up2Theta_deg->GetE(),SetName(_T("cE_Th")),Wave_Comment},//vs Theta_deg, 感度補正ありの誤差
+
+						}
+					);
+					file_output.WriteString(tstr.c_str());
+
+
+					StringsForIgorTextWave::WaveText1(tstr,
+						{
+							{ToBoundaries(sinfoR),SetName(_T("i_R")),_T("For 2D images")},//横軸境界 R
+							{ToBoundaries(sinfoTheta_deg),SetName(_T("i_Th")),_T("For 2D images")},//横軸境界 Theta_deg
+
+							{ToBoundaries(sinfoPhi),SetName(_T("i_Ph")),_T("For 2D images")},//横軸境界 Phi_deg
+							{ToBoundaries(sinfoVarPhi),SetName(_T("i_VPh")),_T("For 2D images")},//横軸境界 VarPhi_deg
+						}
+					);
+					file_output.WriteString(tstr.c_str());
+
+
+					StringsForIgorTextWave::WaveText2(tstr,
+						{
+							{up2RawR_Phi->Get(), SetName(_T("h_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
+							{up2RawR_Phi->GetE(), SetName(_T("hE_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
+
+							{up2RawTheta_deg_VarPhi->Get(),SetName(_T("h_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
+							{up2RawTheta_deg_VarPhi->GetE(),SetName(_T("hE_Th_VPh")),Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
+
+							//{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
+							//{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
+
+							{up2DetectorSensitivity->DetectorSensitivityDistribution(),_T("Ratio_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度
+							{up2DetectorSensitivity->DetectorSensitivityDistributionE(),_T("RatioE_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度の誤差
+
+
+							{up2Theta_deg_VarPhi->Get(), SetName(_T("c_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正あり
+							{up2Theta_deg_VarPhi->GetE(), SetName(_T("cE_Th_VPh")), Wave_Comment},
+						}
+					);
+					file_output.WriteString(tstr.c_str());
+
+
+				} // isOK
+
+			}
+			catch (std::exception&) {
+				throw;
+			}
+		}
+
+
+
+		bool isOK()const noexcept {
+			return m_isOK;
+		}
+
+		//CI
+		std::unique_ptr<ScaledHistogram1D> up2CI;
+
+		//1000 eVでの感度
+		std::unique_ptr<class_DetectorSensitivity_Ef> up2DetectorSensitivity;
+
+		//感度補正有り
+		std::unique_ptr<ScaledHistogram1D> up2Theta_deg;
+		std::unique_ptr<ScaledHistogram2D> up2Theta_deg_VarPhi;
+		std::unique_ptr<ScaledHistogram1D> up2R;
+		std::unique_ptr<ScaledHistogram2D> up2R_Phi;
+
+		//感度補正なし
+		std::unique_ptr<ScaledHistogram1D> up2RawTheta_deg;
+		std::unique_ptr<ScaledHistogram2D> up2RawTheta_deg_VarPhi;
+		std::unique_ptr<ScaledHistogram1D> up2RawR;
+		std::unique_ptr<ScaledHistogram2D> up2RawR_Phi;
+
+	private:
+		//状態
+		bool m_isOK;
+
+	};
+
+
+
+
 //-----------デフォルト------------//
 #ifdef LAES2_ANALYSIS_DEFAULT
 #ifndef LAES2_ANALYSIS_DEFINED
@@ -461,6 +875,8 @@ namespace LAES2 {
 #endif // LAES2_ANALYSIS_DEFINED
 #endif // LAES2_ANALYSIS_DEFAULT
 //---------------------------------//
+
+
 
 
 
@@ -1837,9 +2253,7 @@ namespace LAES2 {
 
 
 
-	//C++プログラムでConditionを使う
-	std::unique_ptr<CCFileCondition> up2CCFileCondition;
-
+	
 
 	
 
@@ -1877,447 +2291,90 @@ namespace LAES2 {
 	}
 
 
-	//ヒストグラムをまとめて作る
-	class HistoProc {
-	public:
-		HistoProc()
-			:
-			up2CI(nullptr),
-			up2DetectorSensitivity(nullptr),
-			up2Theta_deg(nullptr),
-			up2Theta_deg_VarPhi(nullptr),
-			up2R(nullptr),
-			up2R_Phi(nullptr),
-			up2RawTheta_deg(nullptr),
-			up2RawTheta_deg_VarPhi(nullptr),
-			up2RawR(nullptr),
-			up2RawR_Phi(nullptr),
-			m_isOK(false)
-		{
-			try {
-				//区間の個数
-				//I0=(0,R1], ... , I_(n-1)=(R_(n-1), R_n], I_n=(R_n, R_max]
-				const size_t numIntervals = static_cast<size_t>(ceil(dRmax / dBinR));
-				const size_t Dimsize_Phi_deg = static_cast<size_t>(i32VarPhiNumSteps > 0 ? i32VarPhiNumSteps : 12);//Phiのサイズ
 
-				auto pinf_CI = make_PointInformation(64, PointInformation::Difference::Central0);
-				auto pinf = make_PointInformation(numIntervals, PointInformation::Difference::Backward);
+	
 
-
-				up2CI = make_ScaledHistogram1D(pinf_CI);
-
-				up2DetectorSensitivity = DetectorSensitivity1_1000_1000::make(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
-
-				up2Theta_deg = DCSHistogram_1000_1000::make_1D_vs_Theta_deg(numIntervals, dBinR);
-				up2Theta_deg_VarPhi = DCSHistogram_1000_1000::make_2D_vs_Theta_deg_VarPhi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
-
-				up2R = DCSHistogram_1000_1000::make_1D_vs_R(numIntervals, dBinR);
-				up2R_Phi = DCSHistogram_1000_1000::make_2D_vs_R_Phi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
-
-				up2RawTheta_deg = DCSHistogram<Conv_1000_1000>::make_1D_vs_Theta_deg(numIntervals, dBinR);
-				up2RawTheta_deg_VarPhi = DCSHistogram<Conv_1000_1000>::make_2D_vs_Theta_deg_VarPhi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
-
-				up2RawR = DCSHistogram<Conv_1000_1000>::make_1D_vs_R(numIntervals, dBinR);
-				up2RawR_Phi = DCSHistogram<Conv_1000_1000>::make_2D_vs_R_Phi(numIntervals, dBinR, Dimsize_Phi_deg, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion));
-
-				m_isOK = true;
-			}
-			catch (std::exception& ex) {
-
-				up2CI.reset();
-
-				up2Theta_deg.reset();
-				up2Theta_deg_VarPhi.reset();
-
-				up2R.reset();
-				up2R_Phi.reset();
-
-				up2RawTheta_deg.reset();
-				up2RawTheta_deg_VarPhi.reset();
-
-				up2RawR.reset();
-				up2RawR_Phi.reset();
-
-				up2DetectorSensitivity.reset();
-
-				m_isOK = false;
-
-				AfxMessageBox(ex.what());
-			}
-		}
-		~HistoProc() = default;
-
-		//Crdに全て書き終わってから実行する
-		void AddToHist() {
-			try {
-				//コンストラクタでエラーなし
-				if (m_isOK) {
-
-					//座標計算でスペクトルレンジ外なら例外
-
-					up2CI->AddValue(static_cast<double>(Crd::ConsistencyIndicator), 1, 1);
-
-
-					//感度補正による正味のカウント数を加算
-					auto w_we = up2DetectorSensitivity->Weight(Crd::r, Crd::phi);
-					double we1 = w_we.second / w_we.first;
-					double SignalAmount = w_we.first;
-					double SignalError = w_we.first * sqrt(1 + we1 * we1);
-
-					up2Theta_deg->AddValue(Crd::Theta_deg, SignalAmount, SignalError);
-					up2Theta_deg_VarPhi->AddValue(Crd::Theta_deg, Crd::VarPhi_deg, SignalAmount, SignalError);
-
-					up2R->AddValue(Crd::r, SignalAmount, SignalError);
-					up2R_Phi->AddValue(Crd::r, Crd::phi, SignalAmount, SignalError);
-
-
-					//感度補正なし
-					up2RawTheta_deg->AddValue(Crd::Theta_deg, 1, 1);
-					up2RawTheta_deg_VarPhi->AddValue(Crd::Theta_deg, Crd::VarPhi_deg, 1, 1);
-
-					up2RawR->AddValue(Crd::r, 1, 1);
-					up2RawR_Phi->AddValue(Crd::r, Crd::phi, 1, 1);
-
-				}
-			}
-			catch (std::exception&) {
-				throw;
-			}
-		}
-
-		//全部積算終わったらファイルへ書き出す
-		void WriteToIgorTextFile(CStdioFile& file_output, const bool Put_IGOR_First, const std::basic_string<TCHAR>& Wave_Comment, const std::basic_string<TCHAR>& WaveName_Suffix) {
-			try {
-				if (m_isOK) {
-
-					std::basic_string<TCHAR> tstr;
-
-					//スケール情報
-					const auto& sinfoR = up2R_Phi->ScaleInfo0();
-					const auto& sinfoTheta_deg = up2Theta_deg_VarPhi->ScaleInfo0();
-
-					const auto& sinfoVarPhi = up2Theta_deg_VarPhi->ScaleInfo1();
-					const auto& sinfoPhi = up2R_Phi->ScaleInfo1();
-
-
-					//DCSの理論曲線
-					std::unique_ptr<std::vector <double>> DCS_Theory_vs_Theta_deg;
-					std::unique_ptr<std::vector <double>> DCS_Theory_vs_R;
-
-					std::unique_ptr<std::vector<std::vector <double>>> DCS_Theory_vs_Theta_deg_VarPhi;
-					std::unique_ptr<std::vector<std::vector <double>>> DCS_Theory_vs_R_Phi;
-
-					//理論値をプロット
-					switch (static_cast<LibFlag::Sample>(i32SelectAtom))
-					{
-					case LibFlag::Sample::He:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_He_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::C:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_C_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::N:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_N_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::Ne:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Ne_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::Cl:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Cl_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::Ar:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Ar_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					case LibFlag::Sample::Xe:
-						DCS_Theory_vs_Theta_deg = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_1D_vs_Theta_deg(sinfoTheta_deg);
-						DCS_Theory_vs_R = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_1D_vs_R(sinfoR);
-						DCS_Theory_vs_Theta_deg_VarPhi = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_2D_vs_Theta_deg_VarPhi(sinfoTheta_deg, sinfoVarPhi);
-						DCS_Theory_vs_R_Phi = DCSTheoretical<Conv_1000_1000, Elastic32_Xe_1000eV>::make_2D_vs_R_Phi(sinfoR, sinfoPhi);
-						break;
-					default:
-						DCS_Theory_vs_Theta_deg.reset();
-						DCS_Theory_vs_R.reset();
-						DCS_Theory_vs_Theta_deg_VarPhi.reset();
-						DCS_Theory_vs_R_Phi.reset();
-						throw std::exception("Failure on making Unique ptr to DCSTheoretical curves");
-					}
-
-
-
-					//横軸 bin の代表値を取得する関数　一次元グラフ用
-					auto ToScales = [](const ScaleInformation& sci) {
-						std::vector<double> v;
-						v.reserve(sci.NumIntervals());
-						for (size_t i = 0; i < sci.NumIntervals(); i++) {
-							v.push_back(sci.IntervalIndex2XRepresentative(i));
-						}
-						return std::move(v);
-					};
-					//横軸 bin の境界を取得する関数　二次元イメージ用
-					auto ToBoundaries = [](const ScaleInformation& sci) {
-						std::vector<double> v;
-						v.reserve(sci.NumIntervals() + 1);
-						for (size_t i = 0; i < sci.NumIntervals(); i++) {
-							v.push_back(sci.Interval(i).first);
-						}
-						v.push_back(sci.Interval(sci.NumIntervals() - 1).second);
-						return std::move(v);
-					};
-
-					//ウェーブ名の先頭と末尾に文字列つける
-					auto SetName = [&WaveName_Suffix](const std::basic_string<TCHAR>&& Name) {
-						const auto Src = CurrentDAqInfo::SourceLMFileName();//ソースlmf名称を先頭に
-						return Src + Name + WaveName_Suffix;
-					};
-
-					//itx へ出力
-					if (Put_IGOR_First) {
-						file_output.WriteString(_T("IGOR\n"));
-					}
-
-					//積算を終えたらCalibrateを実行して結果を記録する
-					StringsForIgorTextWave::WaveText1(tstr,
-						{
-							{ToScales(sinfoR),SetName(_T("g_R")), _T("For 1D graphs")},//横軸スケール R
-							{ToScales(sinfoTheta_deg),SetName(_T("g_Th")),_T("For 1D graphs")},//横軸スケール Theta_deg
-
-							{up2RawR->Get(),SetName(_T("h_R")), Wave_Comment},//vs R, 感度補正なし
-							{up2RawR->GetE(),SetName(_T("hE_R")), Wave_Comment},//vs R, 感度補正なし
-
-
-							{up2RawTheta_deg->Get(), SetName(_T("h_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
-							{up2RawTheta_deg->GetE(), SetName(_T("hE_Th")),Wave_Comment},//vs Theta_deg, 感度補正なし
-
-
-							{std::move(*DCS_Theory_vs_R),_T("DCS_R"),_T("Elastic32, 1000 eV")},//vs R, DCS理論曲線
-							{std::move(*DCS_Theory_vs_Theta_deg),_T("DCS_Th"),_T("Elastic32, 1000 eV")},//vs Theta_deg, DCS理論曲線
-
-
-							{up2Theta_deg->Get(),SetName(_T("c_Th")),Wave_Comment},//vs Theta_deg, 感度補正あり
-							{up2Theta_deg->GetE(),SetName(_T("cE_Th")),Wave_Comment},//vs Theta_deg, 感度補正ありの誤差
-
-						}
-					);
-					file_output.WriteString(tstr.c_str());
-
-
-					StringsForIgorTextWave::WaveText1(tstr,
-						{
-							{ToBoundaries(sinfoR),SetName(_T("i_R")),_T("For 2D images")},//横軸境界 R
-							{ToBoundaries(sinfoTheta_deg),SetName(_T("i_Th")),_T("For 2D images")},//横軸境界 Theta_deg
-
-							{ToBoundaries(sinfoPhi),SetName(_T("i_Ph")),_T("For 2D images")},//横軸境界 Phi_deg
-							{ToBoundaries(sinfoVarPhi),SetName(_T("i_VPh")),_T("For 2D images")},//横軸境界 VarPhi_deg
-						}
-					);
-					file_output.WriteString(tstr.c_str());
-
-
-					StringsForIgorTextWave::WaveText2(tstr,
-						{
-							{up2RawR_Phi->Get(), SetName(_T("h_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
-							{up2RawR_Phi->GetE(), SetName(_T("hE_R_Ph")), Wave_Comment},//vs R, Phi_deg, 感度補正なし
-
-							{up2RawTheta_deg_VarPhi->Get(),SetName(_T("h_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
-							{up2RawTheta_deg_VarPhi->GetE(),SetName(_T("hE_Th_VPh")),Wave_Comment},//vs Theta_deg, VarPhi, 感度補正なし
-
-							{std::move(*DCS_Theory_vs_R_Phi),_T("DCS_R_Ph"),_T("Elastic32, 1000 eV")},//vs R, rPhi_deg, DCS理論曲面
-							{std::move(*DCS_Theory_vs_Theta_deg_VarPhi),_T("DCS_Th_VPh"),_T("Elastic32, 1000 eV")},//vs Theta_deg, VarPhi_deg, DCS理論曲面
-
-							{up2DetectorSensitivity->DetectorSensitivityDistribution(),_T("Ratio_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度
-							{up2DetectorSensitivity->DetectorSensitivityDistributionE(),_T("RatioE_R_Ph"),_T("Ei = 1000 eV")},//vs R, Phi, 検出器感度の誤差
-
-
-							{up2Theta_deg_VarPhi->Get(), SetName(_T("c_Th_VPh")), Wave_Comment},//vs Theta_deg, VarPhi, 感度補正あり
-							{up2Theta_deg_VarPhi->GetE(), SetName(_T("cE_Th_VPh")), Wave_Comment},
-						}
-					);
-					file_output.WriteString(tstr.c_str());
-
-
-				} // isOK
-
-			}
-			catch (std::exception&) {
-				throw;
-			}
-		}
-
-
-
-		bool isOK()const noexcept {
-			return m_isOK;
-		}
-
-		//CI
-		std::unique_ptr<ScaledHistogram1D> up2CI;
-
-		//1000 eVでの感度
-		std::unique_ptr<DetectorSensitivity1_1000_1000> up2DetectorSensitivity;
-
-		//感度補正有り
-		std::unique_ptr<ScaledHistogram1D> up2Theta_deg;
-		std::unique_ptr<ScaledHistogram2D> up2Theta_deg_VarPhi;
-		std::unique_ptr<ScaledHistogram1D> up2R;
-		std::unique_ptr<ScaledHistogram2D> up2R_Phi;
-
-		//感度補正なし
-		std::unique_ptr<ScaledHistogram1D> up2RawTheta_deg;
-		std::unique_ptr<ScaledHistogram2D> up2RawTheta_deg_VarPhi;
-		std::unique_ptr<ScaledHistogram1D> up2RawR;
-		std::unique_ptr<ScaledHistogram2D> up2RawR_Phi;
-
-	private:
-		//状態
-		bool m_isOK;
-	};
-
-	//個別イベントごとにCoordinateを数表で出力する
-	class EventProc {
-	public:
-		EventProc() = delete;
-		EventProc(const __int32 WriteCoordinate, const TCHAR sep, const std::basic_string<TCHAR>& ConditionStr)
-			:
-			m_up2StringForOutputFile(nullptr),
-			m_ConditionStr(ConditionStr),
-			m_isOK(false),
-			tstr()
-		{
-			try {
-				auto coord = static_cast<LibFlag::type_Flag>(WriteCoordinate > 0 ? WriteCoordinate : 0);
-				m_up2StringForOutputFile = make_StringsForOutputFile(coord, sep);
-				if (!m_up2StringForOutputFile) {
-					throw std::exception("EventProc::EventProc : Failure in making StringsForOutputFile");
-				}
-				m_isOK = true;
-			}
-			catch (std::exception&ex) {
-				m_up2StringForOutputFile.reset();
-				AfxMessageBox(ex.what());
-				m_isOK = false;
-			}
-		}
-		~EventProc() = default;
-
-		void WriteHeaderString(CStdioFile& file_output) {
-			try {
-				if (m_isOK) {
-					
-					//冒頭の情報
-					m_up2StringForOutputFile->GetHeaderString(tstr);
-					file_output.WriteString(tstr.c_str());
-					file_output.WriteString(_T("\n"));
-
-					//Condition
-					file_output.WriteString(m_ConditionStr.c_str());
-					file_output.WriteString(_T("\n"));
-
-					//Coordinate名称
-					m_up2StringForOutputFile->GetCoordinatesString(tstr);
-					file_output.WriteString(tstr.c_str());
-					file_output.WriteString(_T("\n"));
-				}
-			}
-			catch (std::exception&) {
-				throw;
-			}
-		}
-
-		void WriteCoordinateValueString(CStdioFile& file_output) {
-			try {
-				if (m_isOK) {
-					if (up2CCFileCondition->IsTrue(m_ConditionStr)) {
-						if (m_up2StringForOutputFile->GetValuesString(tstr) == 0) {
-							file_output.WriteString(tstr.c_str());
-							file_output.WriteString(_T("\n"));
-						}
-					}
-				}
-			}
-			catch (std::exception&) {
-				throw;
-			}
-		}
-
-		bool isOK()const noexcept { return m_isOK; }
-
-		//書き出し用クラス
-		std::unique_ptr<StringsForOutputFile> m_up2StringForOutputFile;
-
-		//採用するCondition
-		const std::basic_string<TCHAR> m_ConditionStr;
-
-	private:
-		bool m_isOK;
-		std::basic_string<TCHAR> tstr;
-	};
 
 	//CCFで設定したCoordinate, Conditionごとに外部ファイルへ書き込む作業をまとめたクラス
-	class HistEventProc {
+	//LAES用
+	class HistEventProc1 {
 	public:
-		HistEventProc() = delete;
-		~HistEventProc() = default;
-		
-		HistEventProc(std::basic_string<TCHAR>& FileName_Histo_ITX, std::basic_string<TCHAR>& FileName_Event_TXT, const __int32 WriteCoordinate, const TCHAR sep, const __int32 WriteCoordinatesToFile_Condition)
+		HistEventProc1() = delete;
+		~HistEventProc1() = default;
+
+		HistEventProc1(std::basic_string<TCHAR>& FileName_Histo_ITX, const TCHAR sep)
 			:
 			m_FileName_Histo_ITX(FileName_Histo_ITX),
-			m_FileName_Event_TXT(FileName_Event_TXT),
+			m_FileName_Event_TXT(_T("")),
 			m_File(),
-			m_ConditionStr(),
+			m_ConditionStr(_T("mcleanT_WithIR_KESp1R")),
+			m_ConditionStr_(_T("mcleanT_WithoutIR_KESp1R")),
+			m_ConditionStr2(_T("mcleanT_WithIR_KESp2R")),
+			m_ConditionStr2_(_T("mcleanT_WithoutIR_KESp2R")),
 			m_HistoP(nullptr),
-			m_EventP(nullptr),
+			m_HistoP_b(nullptr),
+			m_HistoP2(nullptr),
+			m_HistoP2_b(nullptr),
+			//m_EventP(nullptr),
 			m_isOK(false)
 		{
 			try {
 
-				//Condition文字列を取得
-				LibFlag::Condition_ToString(m_ConditionStr, static_cast<LibFlag::type_Flag>(WriteCoordinatesToFile_Condition));
 				
 				//ファイル書き込みプロシージャを作成
-				m_HistoP = std::make_unique<HistoProc>();
-				m_EventP = std::make_unique<EventProc>(WriteCoordinate, sep, m_ConditionStr);
+				m_HistoP = std::make_unique<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1001p55>>();
+				m_HistoP_b = std::make_unique<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1001p55>>();
 
+
+				m_HistoP2 = std::make_unique<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1003p10>>();
+				m_HistoP2_b = std::make_unique<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1003p10>>();
+
+				
+				//m_EventP = std::make_unique<EventProc>(WriteCoordinate, sep, m_ConditionStr);
+				
 				if (!m_HistoP) {
-					throw std::exception("HistEventProc::HistEventProc : m_HistP 1");
+					throw std::exception("HistEventProc::HistEventProc : m_HistP");
 				}
 				if (!m_HistoP->isOK()) {
-					throw std::exception("HistEventProc::HistEventProc : m_HistP 2");
+					throw std::exception("HistEventProc::HistEventProc : m_HistP not ok");
 				}
-				if (!m_EventP) {
-					throw std::exception("HistEventProc::HistEventProc : m_EventP 1");
+				if (!m_HistoP_b) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP_b");
 				}
-				if (!m_EventP->isOK()) {
-					throw std::exception("HistEventProc::HistEventProc : m_EventP 2");
+				if (!m_HistoP_b->isOK()) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP_b not ok");
 				}
 
+				if (!m_HistoP2) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP2");
+				}
+				if (!m_HistoP2->isOK()) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP2 not ok");
+				}
+				if (!m_HistoP2_b) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP2_b");
+				}
+				if (!m_HistoP2_b->isOK()) {
+					throw std::exception("HistEventProc::HistEventProc : m_HistP2_b not ok");
+				}
+
+				/*if (!m_EventP) {
+					throw std::exception("HistEventProc::HistEventProc : m_EventP 1");
+				}*/
+				/*if (!m_EventP->isOK()) {
+					throw std::exception("HistEventProc::HistEventProc : m_EventP 2");
+				}*/
+
 				//ファイルを開く
-				if (!m_File.Open(m_FileName_Event_TXT.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
-					m_File.Abort();
-					throw std::exception("HistEventProc::HistEventProc : file for event cannot be opened.");
-				}
-				else {
-					//Event冒頭
-					m_EventP->WriteHeaderString(m_File);
-				}
-				
+				//if (!m_File.Open(m_FileName_Event_TXT.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+				//	m_File.Abort();
+				//	throw std::exception("HistEventProc::HistEventProc : file for event cannot be opened.");
+				//}
+				//else {
+				//	//Event冒頭
+				//	m_EventP->WriteHeaderString(m_File);
+				//}
+
 				//開いたまま次へ
 
 				m_isOK = true;
@@ -2325,7 +2382,7 @@ namespace LAES2 {
 			catch (std::exception& ex) {
 				AfxMessageBox(ex.what());
 				m_isOK = false;
-			}			
+			}
 		}
 
 		void AppendEvent() {
@@ -2338,7 +2395,52 @@ namespace LAES2 {
 						m_HistoP->AddToHist();
 
 						//イベントファイルへ書き込み
-						m_EventP->WriteCoordinateValueString(m_File);
+						//m_EventP->WriteCoordinateValueString(m_File);
+
+					}
+				}
+
+
+				if (m_isOK) {
+					bool MyCondition = up2CCFileCondition->IsTrue(m_ConditionStr_);
+					if (MyCondition) {
+
+						//ヒストグラムへ加算
+						m_HistoP_b->AddToHist();
+
+
+						//イベントファイルへ書き込み
+						//m_EventP->WriteCoordinateValueString(m_File);
+
+					}
+				}
+
+
+
+				if (m_isOK) {
+					bool MyCondition = up2CCFileCondition->IsTrue(m_ConditionStr2);
+					if (MyCondition) {
+
+						//ヒストグラムへ加算
+						m_HistoP2->AddToHist();
+
+						//イベントファイルへ書き込み
+						//m_EventP->WriteCoordinateValueString(m_File);
+
+					}
+				}
+
+
+				if (m_isOK) {
+					bool MyCondition = up2CCFileCondition->IsTrue(m_ConditionStr2_);
+					if (MyCondition) {
+
+						//ヒストグラムへ加算
+						m_HistoP2_b->AddToHist();
+
+
+						//イベントファイルへ書き込み
+						//m_EventP->WriteCoordinateValueString(m_File);
 
 					}
 				}
@@ -2353,7 +2455,7 @@ namespace LAES2 {
 			try {
 				if (m_isOK) {
 					//イベントファイルを閉じる
-					m_File.Close();
+					//m_File.Close();
 
 					//ヒストグラムをitxへ書き込む
 					//非線形ヒストグラム用出力ファイルを開く
@@ -2363,7 +2465,11 @@ namespace LAES2 {
 					}
 					else {
 						std::basic_string<TCHAR> Comment = m_ConditionStr;
-						m_HistoP->WriteToIgorTextFile(m_File, true, Comment, _T(""));//末尾に文字列つけない
+						m_HistoP->WriteToIgorTextFile(m_File, true, m_ConditionStr, _T("wp1"));
+						m_HistoP_b->WriteToIgorTextFile(m_File, false, m_ConditionStr_, _T("op1"));
+						m_HistoP2->WriteToIgorTextFile(m_File, false, m_ConditionStr2, _T("wp2"));
+						m_HistoP2_b->WriteToIgorTextFile(m_File, false, m_ConditionStr2_, _T("op2"));
+						
 						m_File.Close();
 					}
 				}
@@ -2380,25 +2486,30 @@ namespace LAES2 {
 			return m_isOK;
 		}
 
-		
+
 		const std::basic_string<TCHAR> m_FileName_Histo_ITX;
 		const std::basic_string<TCHAR> m_FileName_Event_TXT;
 
 		CStdioFile m_File;
 		std::basic_string<TCHAR> m_ConditionStr;
-		std::unique_ptr<HistoProc> m_HistoP;
-		std::unique_ptr<EventProc> m_EventP;
+		std::basic_string<TCHAR> m_ConditionStr_;
+		std::basic_string<TCHAR> m_ConditionStr2;
+		std::basic_string<TCHAR> m_ConditionStr2_;
+		
+		//p1 : n=+1, p2 : n=+2, b : background
+		
+		std::unique_ptr<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000,Conv_1000_1001p55>> m_HistoP;
+		std::unique_ptr<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1001p55>> m_HistoP_b;
+		std::unique_ptr<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1003p10>> m_HistoP2;
+		std::unique_ptr<HistoProc_Ei_Ef<DetectorSensitivity1_1000_1000, Conv_1000_1003p10>> m_HistoP2_b;
+		
+		//std::unique_ptr<EventProc> m_EventP;
 
 	private:
 		bool m_isOK;
 	};
 
-	std::unique_ptr<HistEventProc> HEP;
-	std::unique_ptr<HistEventProc> HEP1;
-	std::unique_ptr<HistEventProc> HEP2;
-	std::unique_ptr<HistEventProc> HEP3;
-	std::unique_ptr<HistEventProc> HEP4;
-
+	std::unique_ptr<HistEventProc1> up2hp1;
 
 
 	//解析名称
@@ -2532,12 +2643,8 @@ namespace LAES2 {
 		}
 
 		//ヒストグラムとイベントの書き込み用ファイルを作成する
-		HEP = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath), i32WriteCoordinatesToFile, _T(','), i32WriteCoordinatesToFile_Condition);
-		HEP1 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath1), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath1), i32WriteCoordinatesToFile1, _T(','), 25);//with
-		HEP2 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath2), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath2), i32WriteCoordinatesToFile2, _T(','), 30);//without
-		HEP3 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath3), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath3), i32WriteCoordinatesToFile3, _T(','), i32WriteCoordinatesToFile_Condition3);
-		HEP4 = std::make_unique<HistEventProc>(std::basic_string<TCHAR>(LibPrm::WriteDCSHisto_FilePath4), std::basic_string<TCHAR>(LibPrm::WriteForEachEvents_FilePath4), i32WriteCoordinatesToFile4, _T(','), i32WriteCoordinatesToFile_Condition4);
-
+		auto sstr = std::basic_string<TCHAR>(_T("C:\\Program Files\\RoentDek Handels GmbH\\CoboldPC 2011 R5-2-x64 (Visual Studio .Net 2010 Compilation) V10.1.1412.2\\LAES2_TDC8PCI2_HEX\\Cobold_Shared2\\temp\\DCSHisto_XXX.itx"));
+		up2hp1 = std::make_unique<HistEventProc1>(sstr, _T(','));
 
 		//確認
 		//AfxMessageBox(up2CCFileCondition->Show().c_str());
@@ -3023,8 +3130,8 @@ namespace LAES2 {
 			//@散乱後の極角と方位角
 			double Theta_deg = 0;
 			double VarPhi_deg = 0;
-			Theta_deg = Conv_1000_1001p55::Theta_deg(r);//el
-			VarPhi_deg = Conv_1000_1001p55::VarPhi(phi, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion), static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));//el
+			Theta_deg = Conv_1000_1000::Theta_deg(r);
+			VarPhi_deg = Conv_1000_1000::VarPhi(phi, static_cast<LibFlag::AzimuthFormat>(i32PhiConversion), static_cast<LibFlag::AzimuthFormat>(i32VarPhiConversion));
 			Crd::Theta_deg = Theta_deg;
 			Crd::VarPhi_deg = VarPhi_deg;
 
@@ -3056,11 +3163,8 @@ namespace LAES2 {
 		//エラーがなかったらイベントを追加
 		if (!bEx) {
 			try {
-				HEP->AppendEvent();
-				HEP1->AppendEvent();
-				HEP2->AppendEvent();
-				HEP3->AppendEvent();
-				HEP4->AppendEvent();
+				
+				up2hp1->AppendEvent();
 			}
 			catch (std::exception&) {
 				//
@@ -3210,12 +3314,7 @@ namespace LAES2 {
 		try {
 
 			//最後の作業
-			HEP->Finalize();
-			HEP1->Finalize();
-			HEP2->Finalize();
-			HEP3->Finalize();
-			HEP4->Finalize();
-
+			up2hp1->Finalize();
 
 		}
 		catch (std::out_of_range& ex) {

@@ -97,26 +97,135 @@ Parameter 1060,0.		; Condition flag: value will appear as value in coordinate "c
 ;DAn.dllで使われるならここに書く
 ;1900~1999を汎用バッファとする
 ; ----------------------------
-Parameter 1100,1		;PosX,PosYに採用する値．配布時設定は0．0:uv-pair, 1:vw-pair, 2:uw-pair．rotationはこの後適用される
+;***********************************
+;PosX,PosYに採用する値．配布時設定は0．0:uv-pair, 1:vw-pair, 2:uw-pair．rotationはこの後適用される
+Parameter 1100,1		;PosX,PosYに採用する値
 
 
-Parameter 1110,80				;校正プレートと散乱点の距離[mm]
-Parameter 1111,0				;二次関数r_detector=f(scattering_angle_deg)の係数K0 : e19111401
-Parameter 1112,0.834573			;二次関数r_detector=f(scattering_angle_deg)の係数K1 : e19111401
-Parameter 1113,0.0405143		;二次関数r_detector=f(scattering_angle_deg)の係数K2 : e19111401
+
+
+;***********************************
+;p1101	1以上でビットフラグによって選択したCoordinate値を外部ファイルへ出力する．ゼロ以下ならファイル出力しない．Lib_Inputs.hを参照
+;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;Posx		0
+;PosY		1
+;r		2
+;phi		3
+;TOF		4
+;TOF_NoOffset	5
+;Theta_deg	6
+;VarPhi_deg	7
+;ConsistencyIndicator	8
+;
+Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
+
+
+
+;***********************************
+;p1102	Conditionを数値でただ一つ選択する．Lib_Inputs.hを参照
+;新しく追加，削除するときは上記ファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;always			0
+;clean			1
+;mclean			2
+;mcleanT		3
+;mcleanT_elastic	4
+;
+Parameter 1102,4		;書き込むときのCondition
+
+
+
+
+;***********************************
+;p1111	解析対象の試料を選択する．DCS理論値をプロットするために指定する．Lib_Inputs.hのenumclassを参照
+;新しく追加，削除するときはLib_ConversionToDCSプロジェクトに理論計算結果を追加する
+;次に上記ヘッダファイルのenumclassを変更して，Flag_Condition_Maxも変更する
+;
+;He	0
+;C	1
+;N	2
+;Ne	3
+;Cl	4
+;Ar	5
+;Xe	6
+;
+Parameter 1111,0		;解析対象の試料
+
+
+
+
+;*********************************
+;PosX, PosYの円解析中心
+;e19060502
+;Parameter 1023,1.328		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.242		; PosY-value of center for r/phi coordinates
+
+;e19071204
+;Parameter 1023,-3		; PosX-value of center for r/phi coordinates
+;Parameter 1024,0.5		; PosY-value of center for r/phi coordinates
+
+;e190716
+;Parameter 1023,-1.624		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.25		; PosY-value of center for r/phi coordinates
+
+
+;e19072401
+;Parameter 1023,-1.79		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19072404
+;Parameter 1023,-1.42		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.46		; PosY-value of center for r/phi coordinates
+
+;e19111201
+;Parameter 1023,-3.635		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e1911120
+;Parameter 1023,-3.266		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.759		; PosY-value of center for r/phi coordinates
+
+;e19112101
+;Parameter 1023,-3.8		; PosX-value of center for r/phi coordinates
+;Parameter 1024,-0.8		; PosY-value of center for r/phi coordinates
+
+;e191225
+Parameter 1023,-4.22		; PosX-value of center for r/phi coordinates
+Parameter 1024,-1.18		; PosY-value of center for r/phi coordinates
+
+
+
+;***************************************************
+;w-layerのオフセット
+;dX = Xuv-Xvw = x-y-w
+;dY = Yuv-Yvw = (x-y-w)/sqrt(3.)
+;既存のpOPwをw0,このときdXのピークがdx0にあったら
+;dx0 = x-y-(w+w0)
+;より，新しいpOPwを(w0+dx0)にする
+;e190716
+Parameter 1037,-0.7		; Parameter 1037 = pOPw = Offset for w Point (w translation in w layer of hexanode only)
+
+
 
 Parameter 1114,0.7			;検出器半径R分布のbin[mm]
 Parameter 1115,40			;検出器半径R分布の最大値[mm]
-Parameter 1116,0			;検出器方位角phiの散乱後方位角varphiへのオフセットphi0[deg] : varphi = phi - phi0
 
-Parameter 1117,0.5			;検出器PosXのbin[mm]	p1015-1017はuvw各方向に対するビニングなのでこれはそれらに依存する
-Parameter 1118,0.5			;検出器PosYのbin[mm]	よってPosの計算方法によって変わってくる
+Parameter 1116,2			; Parameter 1116 = for VarPhi_deg conversion ; degついているのは後で改名
+					;	0 = RAD [-pi..pi]
+					;	1 = RAD [0..2pi]
+					;	2 = DEG [-180..180]
+					;	3 = DEG [0..360]
+
+
+Parameter 1117,24			;方位角の刻み数  6なら 360 deg/6 = 60 deg ごとにbinをとる　等間隔刻みなので，細かくとって後で方位角方向についてビニングすることが可能
+
+
+
+Parameter 1118,0.5			;検出器PosXのbin[mm]	p1015-1017はuvw各方向に対するビニングなのでこれはそれらに依存する
+Parameter 1119,0.5			;検出器PosYのbin[mm]	よってPosの計算方法によって変わってくる
 
 Parameter 1120,6000			;TDCボードのトリガにかませた遅延発生器DG645の値[ns]
 
 
-;gitに含みたくないので分離->今後は日付ごとに分けるから必要なし
-execute DAn_FrequentlyCangedParameters.ccf
 
 
 

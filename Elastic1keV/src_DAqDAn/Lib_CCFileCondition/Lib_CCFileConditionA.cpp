@@ -60,12 +60,12 @@ static const tregex r_Condition_Logical2_XOR = tregex(tLogic2_XOR);
 
 
 
-class CCFileCondition_impl:public CCFC {
+class CCFileCondition_impl :public CCFC {
 public:
-    virtual ~CCFileCondition_impl() {}
+	virtual ~CCFileCondition_impl() {}
 
 	CCFileCondition_impl() = delete;
-	
+
 
 	//Conditionの内容
 	struct Contents {
@@ -129,7 +129,7 @@ public:
 			//初回は検索する
 			const auto& contents = m_mpContents.at(ConditionName);
 			//再帰カウンタ変数を用意
-			int RecLimit = 100;
+			int RecLimit = 1000;
 
 			return IsTrue_Recursion(contents, RecLimit);
 		}
@@ -139,6 +139,90 @@ public:
 		catch (std::exception&) {
 			throw;
 		}
+	}
+
+	//Conditionが成立しているならtrue，していないならfalse
+	virtual bool IsTrue(const LibFlag::Condition condition)const {
+		try {
+
+			//一応確認
+			auto vc = static_cast<std::underlying_type_t<LibFlag::Condition>>(condition);
+			if (vc<LibFlag::Condition_Min || vc>LibFlag::Condition_Max) {
+				throw std::invalid_argument("CCFileConditionA::IsTrue : argument ?");
+			}
+
+			tstring ConditionName;
+			LibFlag::Condition_ToString(ConditionName, vc);
+
+
+			//初回は検索する
+			const auto& contents = m_mpContents.at(ConditionName);
+			//再帰カウンタ変数を用意
+			int RecLimit = 100;
+
+			return IsTrue_Recursion(contents, RecLimit);
+		}
+		catch (std::invalid_argument&) {
+			throw;
+		}
+		catch (std::out_of_range&) {
+			throw;
+		}
+		catch (std::exception&) {
+			throw;
+		}
+	}
+
+	virtual tstring Show()const noexcept {
+		const tstring sep = ", ";
+		tstring ans = "";
+		char buf[128];
+
+		ans += "Condition" + sep;
+		ans += "From_Condition1" + sep;
+		ans += "To_Condition2" + sep;
+		ans += "Logic_Coordinate" + sep;
+		ans += "From" + sep;
+		ans += "To" + sep;
+		ans += "p2_Condition1_Contents" + sep;
+		ans += "p2_Condition2_Contents" + sep;
+		ans += "p2_value" + sep;
+
+		ans += "\n\n";
+
+
+		for (const auto& elm : m_mpContents) {
+
+			ans += elm.first + sep;
+
+
+			const auto& contents = elm.second;
+
+
+			ans += contents.From_Condition1 + sep;
+			ans += contents.To_Condition2 + sep;
+			ans += contents.Logic_Coordinate + sep;
+
+			sprintf_s(buf, "%lf", contents.From);
+			ans += buf + sep;
+
+			sprintf_s(buf, "%lf", contents.To);
+			ans += buf + sep;
+
+			sprintf_s(buf, "%p", contents.p2_Condition1_Contents);
+			ans += buf + sep;
+
+			sprintf_s(buf, "%p", contents.p2_Condition2_Contents);
+			ans += buf + sep;
+
+			sprintf_s(buf, "%p", contents.p2_value);
+			ans += buf + sep;
+
+			ans += "\n";
+
+		}
+
+		return std::move(ans);
 	}
 
 
@@ -246,7 +330,7 @@ private:
 				}
 				b1 = IsTrue_Recursion(*contents.p2_Condition1_Contents, RecursionNumber);
 				return !b1;
-			
+
 			default:
 				//不明なタイプフラグ
 				throw std::exception("CCFileCondition::IsTure : Unknown LogiType flag");
