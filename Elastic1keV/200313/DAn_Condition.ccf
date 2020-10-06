@@ -148,7 +148,7 @@ Parameter 1102,4		;書き込むときのCondition
 ;Ar	5
 ;Xe	6
 ;
-Parameter 1111,0		;解析対象の試料
+Parameter 1111,5		;解析対象の試料
 
 
 
@@ -206,7 +206,7 @@ Parameter 1037,-0.7		; Parameter 1037 = pOPw = Offset for w Point (w translation
 
 
 
-Parameter 1114,0.7			;検出器半径R分布のbin[mm]
+Parameter 1114,0.4			;検出器半径R分布のbin[mm]
 Parameter 1115,40			;検出器半径R分布の最大値[mm]
 
 Parameter 1116,2			; Parameter 1116 = for VarPhi_deg conversion ; degついているのは後で改名
