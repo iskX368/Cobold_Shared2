@@ -117,7 +117,7 @@ Parameter 1100,1		;PosX,PosYに採用する値
 ;VarPhi_deg	7
 ;ConsistencyIndicator	8
 ;
-Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
+Parameter 1101,3		;外部ファイルへどのCoordinatesを書き込むか
 
 
 
@@ -130,7 +130,7 @@ Parameter 1101,47		;外部ファイルへどのCoordinatesを書き込むか
 ;mcleanT		3
 ;mcleanT_elastic	4
 ;
-Parameter 1102,4		;書き込むときのCondition
+Parameter 1102,2		;書き込むときのCondition
 
 
 
