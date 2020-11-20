@@ -6,17 +6,7 @@ temp/
 *.recipe
 *.exp
 
-#これは含む
-!CDAn.rc
-!CDAn.rc2
-!CoboldParser_x64.lib
-!CoboldParser_x86.lib
-!CoboldUtilities_x64.lib
-!CoboldUtilities_x86.lib
-!UserSHM_x64.lib
-!UserSHM_x86.lib
-!UserSP_x64.lib
-!UserSP_x86.lib
+
 
 
 
@@ -76,6 +66,18 @@ Shifted1keV/200918/*
 *.la
 *.a
 *.lib
+
+#これは含む
+!CDAn.rc
+!CDAn.rc2
+!CoboldParser_x64.lib
+!CoboldParser_x86.lib
+!CoboldUtilities_x64.lib
+!CoboldUtilities_x86.lib
+!UserSHM_x64.lib
+!UserSHM_x86.lib
+!UserSP_x64.lib
+!UserSP_x86.lib
 
 # Executables
 *.exe
