@@ -67,9 +67,15 @@ Shifted1keV/200918/*
 *.a
 *.lib
 
-#これは含む
+#ただしこれは含む
+!CDAq.rc
+!CDAq.rc2
 !CDAn.rc
 !CDAn.rc2
+!UserSHM.rc
+!UserSHM.rc2
+!UserFCall.rc
+!UserFCall.rc2
 !CoboldParser_x64.lib
 !CoboldParser_x86.lib
 !CoboldUtilities_x64.lib
@@ -78,6 +84,12 @@ Shifted1keV/200918/*
 !UserSHM_x86.lib
 !UserSP_x64.lib
 !UserSP_x86.lib
+!GeneralIO_x64.lib
+!GeneralIO_x86.lib
+!HighResolutionTimer_x64.lib
+!HighResolutionTimer_x86.lib
+!MemAcc.lib
+
 
 # Executables
 *.exe
